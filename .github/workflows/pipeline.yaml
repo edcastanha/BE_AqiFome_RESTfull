@@ -1,0 +1,13 @@
+name: Local GIT Actions
+on: [ push, pull_request ]
+
+jobs:
+  local-action-test:
+    name: 'Build and Run Local'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run API
+        run: |
+          docker-compose up -d
