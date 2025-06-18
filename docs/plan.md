@@ -12,7 +12,7 @@ Descrição: Criar a estrutura básica do projeto, incluindo pastas para modelos
 Dependências: Tarefa 1.
 Estimativa: 1 hora.
 Entregável: Estrutura de diretórios inicial e arquivo de configuração de projeto.
-Status: Andamento.
+Status: Concluído.
 
 ## Tarefa 3: Configurar Conexão com o Banco de Dados
 Descrição: Adicionar as dependências do driver do banco de dados e configurar a conexão.

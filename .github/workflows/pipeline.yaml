@@ -10,6 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run API
+      - name: Run Tests Python
         run: |
-          docker-compose up -d
+          docker-compose exec api pytest

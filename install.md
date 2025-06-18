@@ -12,8 +12,8 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 1. **Clone o repositório:**
 
    ```bash
-   git clone <URL_DO_REPOSITORIO>
-   cd <nome_da_pasta_do_projeto>
+   git clone https://github.com/edcastanha/BE_AqiFome_RESTfull.git
+   cd BE_AqiFome_RESTfull/src/
    ```
 
 2. **Construa e inicie os containers:**
