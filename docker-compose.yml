@@ -1,22 +1,18 @@
-version: '3.9'
-
 services:
   api:
     build: .
-    container_name: app_rest_api
+    container_name: rest_api
     ports:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
-    volumes:
-      - api:/api
+    env_file:
+      - .env.container
+    restart: always
 
   db:
     image: postgres:15
-    container_name: postgres_db
-    restart: always
+    container_name: db_api
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -25,12 +21,7 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    restart: always
 
 volumes:
   pgdata: 
-  api:
-    driver: local
-    driver_opts:
-      type: none
-      device: ./src
-      o: bind

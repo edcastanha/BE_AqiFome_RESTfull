@@ -11,5 +11,5 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Run Tests Python
-        run: |
+        run:
           docker-compose exec api pytest

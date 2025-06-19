@@ -13,13 +13,13 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 
    ```bash
    git clone https://github.com/edcastanha/BE_AqiFome_RESTfull.git
-   cd BE_AqiFome_RESTfull/src/
+   cd BE_AqiFome_RESTfull/
    ```
 
 2. **Construa e inicie os containers:**
 
    ```bash
-   docker-compose up --build
+   docker-compose up --build -d
    ```
 
    Isso irá construir as imagens (caso necessário) e iniciar os serviços definidos no arquivo `docker-compose.yml`.

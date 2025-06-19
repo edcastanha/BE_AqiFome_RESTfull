@@ -1,6 +1,6 @@
 # API RESTfull - AQIFome
 
-[Guia de Instalação](install.md)
+[Guia de Instalação](INSTALL.md)
 
 ## Contexto
 O aiqfome está expandindo seus canais de integração e precisa de uma API robusta para gerenciar os "produtos favoritos" de usuários na plataforma.

@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0 -- /home/edson/repos/BE_AqiFome_RESTfull/venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/edson/repos/BE_AqiFome_RESTfull
+plugins: anyio-4.9.0
+collecting ... collected 5 items
+
+tests/core/domain/test_cliente.py::test_cliente_model PASSED             [ 20%]
+tests/core/domain/test_favorito.py::test_favorito_model PASSED           [ 40%]
+tests/core/service/test_cliente_service.py::test_criar_cliente PASSED    [ 60%]
+tests/core/service/test_favorito_service.py::test_adicionar_favorito PASSED [ 80%]
+tests/core/service/test_favorito_service.py::test_listar_remover_favorito PASSED [100%]
+
+========================= 5 passed, 1 warning in 0.51s =========================
