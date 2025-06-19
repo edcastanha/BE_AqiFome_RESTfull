@@ -11,9 +11,11 @@ COPY ./src/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o restante do código para o container
-COPY ./src .
+COPY ./src ./src
 
-COPY ./core ./core
+COPY ./core .core
+
+COPY ./tests ./tests
 
 # Expõe a porta padrão do FastAPI
 EXPOSE 8000
