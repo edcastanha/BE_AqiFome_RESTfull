@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI
 import requests
 
@@ -18,10 +17,9 @@ def read_all():
     print("Acessando a API externa...")
     # Fazendo uma requisição GET para a API externa
     try:
-        response = requests.get('https://fakestoreapi.com:443/products', timeout=10)
+        response = requests.get('https://fakestoreapi.com/products', timeout=10)
         response.raise_for_status()
         return {"mensagem": "Endpoint de leitura de todos os itens", "itens": response.json()}
     except requests.exceptions.RequestException as e:
         print(f"Erro ao acessar a API externa: {e}")
         return {"mensagem": "Erro ao acessar a API externa. Por favor, tente novamente mais tarde.", "itens": []}
-

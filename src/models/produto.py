@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from decimal import Decimal
 
-class Produto(BaseModel):
-    """
+class Produtos_Cache(BaseModel):
+    """ 
     Modelo que representa um produto da Fake Store API.
     Segue os princípios de DDD e Clean Code para representar
     a entidade externa de forma clara e consistente.
