@@ -1,0 +1,42 @@
+# Node modules
+node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+bower_components
+
+# Build output
+dist
+build
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Env files
+.env
+.env.*
+
+# Test output
+coverage
+*.test.js
+
+# IDE/editor files
+.vscode
+.idea
+*.swp
+*.swo
+*.bak
+*.tmp

@@ -1,5 +1,7 @@
 name: Local GIT Actions
-on: [ push, pull_request ]
+on: [ pull_request ]
+branches:
+  - main
 
 jobs:
   local-action-test:
@@ -8,6 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run API
+      - name: Run Tests Python
         run: |
-          docker-compose up -d
+          docker-compose exec api pytest

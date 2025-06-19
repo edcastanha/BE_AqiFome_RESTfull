@@ -10,6 +10,8 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+    volumes:
+      - api:/api
 
   db:
     image: postgres:15
@@ -26,3 +28,9 @@ services:
 
 volumes:
   pgdata: 
+  api:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./src
+      o: bind
