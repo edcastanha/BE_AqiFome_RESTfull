@@ -1,15 +1,13 @@
-@localhost = http://localhost:8000/
+@localhost = http://localhost:8000
 
-###
+### ROUTE TESTS
 GET {{localhost}} HTTP/1.1
 
-###
+### Product All api external
+GET {{localhost}}/itens HTTP/1.1
 
-GET {{localhost}}itens HTTP/1.1
-
-###
-
-POST {{localhost}}/comments HTTP/1.1
+### ITEM
+POST {{localhost}}/item HTTP/1.1
 content-type: application/json
 
 {
