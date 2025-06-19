@@ -1,6 +1,6 @@
-from src.core.domain.cliente import Cliente
-from src.core.config.db import SessionLocal
-from src.core.repository.cliente_orm import ClienteORM
+from core.domain.cliente import Cliente
+from core.config.db import SessionLocal
+from core.repository.cliente_orm import ClienteORM
 from sqlalchemy.orm import Session
 from typing import Optional, List
 

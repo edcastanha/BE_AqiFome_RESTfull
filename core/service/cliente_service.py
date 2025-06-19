@@ -1,5 +1,5 @@
-from src.core.domain.cliente import Cliente
-from src.core.repository.cliente_repository import ClienteRepository
+from core.domain.cliente import Cliente
+from core.repository.cliente_repository import ClienteRepository
 
 class ClienteService:
     def __init__(self, repository: ClienteRepository):

@@ -1,6 +1,6 @@
-from src.core.domain.favorito import Favorito
-from src.core.config.db import SessionLocal
-from src.core.repository.favorito_orm import FavoritoORM
+from core.domain.favorito import Favorito
+from core.config.db import SessionLocal
+from core.repository.favorito_orm import FavoritoORM
 from sqlalchemy.orm import Session
 from typing import Optional, List
 

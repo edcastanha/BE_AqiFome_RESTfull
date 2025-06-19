@@ -1,6 +1,6 @@
-from src.core.domain.favorito import Favorito
-from src.core.service.favorito_service import FavoritoService
-from src.core.repository.favorito_repository import FavoritoRepository
+from core.domain.favorito import Favorito
+from core.service.favorito_service import FavoritoService
+from core.repository.favorito_repository import FavoritoRepository
 import pytest
 from typing import List
 

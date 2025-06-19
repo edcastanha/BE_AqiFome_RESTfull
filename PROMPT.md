@@ -36,4 +36,7 @@
 ---
 
 **Resumo:**  
-O Agent deve garantir que o código entregue seja limpo, testável, desacoplado de frameworks, bem documentado e coberto por testes, explicando sempre as decisões e mantendo o CORE do
+O Agent deve garantir que o código entregue seja limpo, testável, desacoplado de frameworks, bem documentado e coberto por testes, explicando sempre as decisões e mantendo o CORE do como namespace para os import validos. Assegure que as práticas de SOLID, Clean Code e DDD sejam seguidas rigorosamente, priorizando a qualidade e a manutenibilidade do sistema. A documentação deve ser clara e atualizada, refletindo as decisões de design e arquitetura tomadas durante o desenvolvimento.
+
+### 6. Estrutura de Pastas
+- `core/`: Contém o núcleo do sistema, incluindo entidades, regras de negócio e casos de uso.

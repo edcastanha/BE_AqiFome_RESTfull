@@ -1,4 +1,4 @@
-from src.core.domain.favorito import Favorito
+from core.domain.favorito import Favorito
 
 def test_favorito_model():
     favorito = Favorito(id=1, cliente_id=1, produto_id=123, titulo="Produto Exemplo", imagem="url", preco=10.0, review="Ótimo!")

@@ -1,7 +1,7 @@
 import pytest
-from src.core.domain.cliente import Cliente
-from src.core.repository.cliente_repository import ClienteRepository
-from src.core.service.cliente_service import ClienteService
+from core.domain.cliente import Cliente
+from core.repository.cliente_repository import ClienteRepository
+from core.service.cliente_service import ClienteService
 from typing import List
 
 class FakeClienteRepository(ClienteRepository):

@@ -1,4 +1,4 @@
-from src.core.domain.cliente import Cliente
+from core.domain.cliente import Cliente
 
 def test_cliente_model():
     cliente = Cliente(id=1, nome="João", email="joao@email.com")

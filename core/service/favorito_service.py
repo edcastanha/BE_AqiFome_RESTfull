@@ -1,5 +1,5 @@
-from src.core.domain.favorito import Favorito
-from src.core.repository.favorito_repository import FavoritoRepository
+from core.domain.favorito import Favorito
+from core.repository.favorito_repository import FavoritoRepository
 from typing import List
 
 class FavoritoService:
