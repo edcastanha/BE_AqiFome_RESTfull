@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from core.config.db import SessionLocal, Base, engine
-from core.domain.cliente import Cliente
-from core.domain.favorito import Favorito
-from core.repository.cliente_repository import ClienteRepository
-from core.repository.favorito_repository import FavoritoRepository
-from core.service.cliente_service import ClienteService
-from core.service.favorito_service import FavoritoService
+
+from src.core.config.db import SessionLocal, Base, engine
+from src.core.domain.cliente import Cliente
+from src.core.domain.favorito import Favorito
+from src.core.repository.cliente_repository import ClienteRepository
+from src.core.repository.favorito_repository import FavoritoRepository
+from src.core.service.cliente_service import ClienteService
+from src.core.service.favorito_service import FavoritoService
 
 app = FastAPI(title="AqiFome RESTful API")
 

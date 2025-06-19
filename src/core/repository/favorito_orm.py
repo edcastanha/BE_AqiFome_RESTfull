@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, UniqueConstraint
-from core.config.db import Base
+from src.core.config.db import Base
 
 class FavoritoORM(Base):
     __tablename__ = "favoritos"

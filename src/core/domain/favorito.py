@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class Favorito(BaseModel):
     id: Optional[int]
@@ -10,9 +10,9 @@ class Favorito(BaseModel):
     preco: float
     review: Optional[str]
 
-    class Config:
-        orm_mode = True
-        schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
             "example": {
                 "id": 1,
                 "cliente_id": 1,
@@ -23,3 +23,4 @@ class Favorito(BaseModel):
                 "review": "Excelente produto!"
             }
         }
+    )

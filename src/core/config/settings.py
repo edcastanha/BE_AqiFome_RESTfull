@@ -1,4 +1,5 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 import os
 
 class Settings(BaseSettings):
@@ -9,11 +10,8 @@ class Settings(BaseSettings):
     db_name: str = os.getenv("DB_NAME", "postgres")
 
     @property
-    def database_url(self) -> str:
+    def resolved_database_url(self) -> str:
         return f"postgresql://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}"
-
-    class Config:
-        env_file = ".env"
 
 def get_settings() -> Settings:
     return Settings()
