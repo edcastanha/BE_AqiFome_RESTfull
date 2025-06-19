@@ -13,17 +13,13 @@ def read_root():
 def read_all():
     """
     Endpoint de leitura de todos os itens da API Public Fake Store.
-    Retorna uma mensagem contendo todos os produtos disponíveis.
-    Exemplo de uso:
-    GET /itens
-    Resposta:
+    Retorna uma lista de itens disponíveis na loja.
     """
     print("Acessando a API externa...")
     # Fazendo uma requisição GET para a API externa
     try:
         response = requests.get('https://fakestoreapi.com:443/products', timeout=10)
         response.raise_for_status()
-        print(response.json())
         return {"mensagem": "Endpoint de leitura de todos os itens", "itens": response.json()}
     except requests.exceptions.RequestException as e:
         print(f"Erro ao acessar a API externa: {e}")
