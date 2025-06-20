@@ -2,6 +2,14 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 class Cliente(BaseModel):
+    """
+    Modelo de dados para um cliente.
+
+    Atributos:
+        id (Optional[int]): Identificador único do cliente.
+        nome (str): Nome do cliente.
+        email (str): E-mail do cliente.
+    """
     id: Optional[int]
     nome: str
     email: str

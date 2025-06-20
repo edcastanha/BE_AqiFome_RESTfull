@@ -1,3 +1,9 @@
+"""
+Módulo de configuração e inicialização do banco de dados SQLAlchemy.
+
+Responsável por criar engine, sessão e base declarativa.
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from core.config.settings import get_settings

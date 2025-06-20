@@ -13,7 +13,7 @@ def repo(mock_db):
     return FavoritoRepository(db=mock_db)
 
 def test_create_favorito(repo, mock_db):
-    favorito = Favorito(cliente_id=1, produto_id=2, titulo="Produto", imagem="img.png", preco=10.0, review="bom")
+    favorito = Favorito(id=1, cliente_id=1, produto_id=2, titulo="Produto", imagem="img.png", preco=10.0, review="bom")
     mock_db.add.return_value = None
     mock_db.commit.return_value = None
     mock_db.refresh.return_value = None
@@ -25,7 +25,7 @@ def test_create_favorito(repo, mock_db):
 def test_list_by_cliente(repo, mock_db):
     favoritos_orm = [MagicMock(), MagicMock()]
     mock_db.query.return_value.filter.return_value.all.return_value = favoritos_orm
-    Favorito.from_orm = MagicMock(side_effect=[Favorito(cliente_id=1, produto_id=1, titulo="A", imagem="", preco=1, review=""), Favorito(cliente_id=1, produto_id=2, titulo="B", imagem="", preco=2, review="")])
+    Favorito.from_orm = MagicMock(side_effect=[Favorito(id=1, cliente_id=1, produto_id=1, titulo="A", imagem="", preco=1, review=""), Favorito(id=2, cliente_id=1, produto_id=2, titulo="B", imagem="", preco=2, review="")])
     result = repo.list_by_cliente(1)
     assert len(result) == 2
     assert result[0].titulo == "A"
