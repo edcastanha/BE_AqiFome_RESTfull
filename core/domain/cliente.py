@@ -29,8 +29,7 @@ class Cliente(ClienteBase):
                 "id": 1,
                 "nome": "Edson Bezerra",
                 "email": "edson@aiqfome.com",
-                "senha": "senha-secreta",
-                "tipo": 0, 
+                "tipo": "NORMAL",
             }
         },
     )
