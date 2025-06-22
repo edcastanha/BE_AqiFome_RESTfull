@@ -24,7 +24,6 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 
    Isso irá construir as imagens (caso necessário) e iniciar os serviços definidos no arquivo `docker-compose.yml`.
 
-
 3. **Acesse a aplicação:**
 
    Para ambiente de teste, você pode usar o comando para criar o primeiro cliente e popular o banco de dados:
@@ -44,8 +43,6 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
    ```bash
    docker-compose down -v
    ```
-
-   
 ---
 
 Se tiver dúvidas ou problemas, consulte a documentação oficial do Docker ou entre em contato com o responsável pelo projeto.
