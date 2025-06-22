@@ -40,6 +40,12 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
    docker-compose down -v
    ```
 
+   Para ambiente de teste, você pode usar o comando para criar o primeiro cliente e popular o banco de dados:
+
+   ```bash
+   docker exec rest_api python src/scripts/seed.py
+   ```
+
 ---
 
 Se tiver dúvidas ou problemas, consulte a documentação oficial do Docker ou entre em contato com o responsável pelo projeto.

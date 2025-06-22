@@ -34,6 +34,7 @@ app = FastAPI(title="AqiFome RESTful API")
 
 Base.metadata.create_all(bind=engine)
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -55,8 +56,22 @@ def get_favorito_service(
     return FavoritoService(
         repository=FavoritoRepository(db),
         produto_repository=produto_repository,
-        fake_store_client=fake_store_client
+        fake_store_client=fake_store_client,
     )
+
+
+def get_admin_user(current_user: Cliente = Depends(get_current_user)):
+    """
+    Dependência que verifica se o usuário autenticado é um administrador.
+    Retorna o usuário se for admin, caso contrário, levanta uma exceção HTTP 403.
+    """
+    if current_user.tipo != 1:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acesso restrito a administradores",
+        )
+    return current_user
+
 
 @app.post("/token")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -89,12 +104,17 @@ def criar_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 @app.get("/clientes", response_model=list[Cliente])
 def listar_clientes(
-    db: Session = Depends(get_db), current_user: Cliente = Depends(get_current_user)
+    db: Session = Depends(get_db), admin_user: Cliente = Depends(get_admin_user)
 ):
+    """
+    Lista todos os clientes. Requer privilégios de administrador.
+    """
     service = ClienteService(ClienteRepository(db))
     return service.listar_clientes()
+
 
 @app.get("/clientes/{cliente_id}", response_model=Cliente)
 def buscar_cliente(
@@ -102,11 +122,19 @@ def buscar_cliente(
     db: Session = Depends(get_db),
     current_user: Cliente = Depends(get_current_user),
 ):
+    # Regra de autorização: Admin pode ver qualquer um, usuário normal só a si mesmo.
+    if current_user.tipo != 1 and current_user.id != cliente_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Operation not permitted",
+        )
+
     service = ClienteService(ClienteRepository(db))
     cliente = service.buscar_cliente(cliente_id)
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
     return cliente
+
 
 @app.put("/clientes/{cliente_id}", response_model=Cliente)
 def atualizar_cliente(
@@ -115,11 +143,19 @@ def atualizar_cliente(
     db: Session = Depends(get_db),
     current_user: Cliente = Depends(get_current_user),
 ):
+    # Regra de autorização: Admin pode atualizar qualquer um, usuário normal só a si mesmo.
+    if current_user.tipo != 1 and current_user.id != cliente_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Operation not permitted",
+        )
+
     service = ClienteService(ClienteRepository(db))
     atualizado = service.atualizar_cliente(cliente_id, cliente)
     if not atualizado:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
     return atualizado
+
 
 @app.delete("/clientes/{cliente_id}")
 def deletar_cliente(
@@ -127,10 +163,18 @@ def deletar_cliente(
     db: Session = Depends(get_db),
     current_user: Cliente = Depends(get_current_user),
 ):
+    # Regra de autorização: Admin pode deletar qualquer um, usuário normal só a si mesmo.
+    if current_user.tipo != 1 and current_user.id != cliente_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Operation not permitted",
+        )
+
     service = ClienteService(ClienteRepository(db))
     if not service.deletar_cliente(cliente_id):
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
     return {"ok": True}
+
 
 # --- Favoritos ---
 @app.post(
