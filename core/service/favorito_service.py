@@ -1,9 +1,12 @@
 from typing import List
 from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
 from core.domain.produto import Produto
+from typing import List
+from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
+from core.domain.produto import Produto
 from core.repository.favorito_repository import FavoritoRepository
 from core.repository.produto_repository import ProdutoRepository
-from core.externos.fake_store_client import FakeStoreClient
+from core.externos.fake_store_product import FakeStoreProduct
 
 class FavoritoService:
     """
@@ -11,18 +14,18 @@ class FavoritoService:
 
     Responsável por validações e operações envolvendo favoritos.
     """
-    def __init__(self, repository: FavoritoRepository, produto_repository: ProdutoRepository, fake_store_client: FakeStoreClient):
+    def __init__(self, repository: FavoritoRepository, produto_repository: ProdutoRepository, fake_store_product: FakeStoreProduct):
         """
         Inicializa o serviço de favoritos.
 
         Args:
             repository (FavoritoRepository): Instância do repositório de favoritos.
             produto_repository (ProdutoRepository): Instância do repositório de produtos.
-            fake_store_client (FakeStoreClient): Cliente para a Fake Store API.
+            fake_store_product (FakeStoreProduct): Cliente para a Fake Store API.
         """
         self.repository = repository
         self.produto_repository = produto_repository
-        self.fake_store_client = fake_store_client
+        self.fake_store_product = fake_store_product
 
     async def adicionar_favoritos(self, cliente_id: int, produto_ids: List[int]) -> List[FavoritoResponse]:
         """
@@ -49,7 +52,7 @@ class FavoritoService:
 
             produto = self.produto_repository.get_by_id(produto_id)
             if not produto:
-                produto_externo = await self.fake_store_client.get_product(produto_id)
+                produto_externo = await self.fake_store_product.get_product(produto_id)
                 if not produto_externo:
                     # Pular produtos não encontrados na API externa
                     continue
@@ -94,6 +97,15 @@ class FavoritoService:
         return response
 
     def remover_favorito(self, cliente_id: int, produto_id: int) -> bool:
+        """
+        Remove um favorito do cliente.
+
+        Args:
+            cliente_id (int): ID do cliente.
+            produto_id (int): ID do produto favorito.
+        Returns:
+            bool: True se removido, False caso contrário.
+        """
         """
         Remove um favorito do cliente.
 

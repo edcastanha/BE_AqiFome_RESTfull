@@ -26,9 +26,13 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 
 3. **Acesse a aplicação:**
 
-   Após a inicialização, a aplicação estará disponível no endereço:
+   Para ambiente de teste, você pode usar o comando para criar o primeiro cliente e popular o banco de dados:
 
-   - http://localhost:8000
+   ```bash
+   docker exec rest_api python src/scripts/seed.py
+   ```
+
+   Isso irá criar um cliente padrão e popular o banco de dados com alguns produtos favoritos.
 
    (Verifique a porta configurada no `docker-compose.yml` ou no `Dockerfile` caso seja diferente)
 
@@ -39,13 +43,6 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
    ```bash
    docker-compose down -v
    ```
-
-   Para ambiente de teste, você pode usar o comando para criar o primeiro cliente e popular o banco de dados:
-
-   ```bash
-   docker exec rest_api python src/scripts/seed.py
-   ```
-
 ---
 
 Se tiver dúvidas ou problemas, consulte a documentação oficial do Docker ou entre em contato com o responsável pelo projeto.

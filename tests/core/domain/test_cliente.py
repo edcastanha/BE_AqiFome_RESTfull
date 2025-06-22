@@ -12,8 +12,8 @@ from core.domain.cliente import (
 
 def test_cliente_creation_with_defaults():
     """Testa a criação de um Cliente com o tipo padrão."""
-    cliente = ClienteBase(email="test@example.com", senha="password")
-    assert cliente.tipo == TipoCliente.NORMAL
+    cliente = ClienteBase(email="test@example.com", senha="password", tipo=TipoCliente.USER)
+    assert cliente.tipo == TipoCliente.USER
 
 
 def test_cliente_creation_as_admin():
@@ -30,6 +30,7 @@ def test_cliente_create_model():
         "nome": "Ed Lourenco",
         "email": "ed.ourenco@example.com",
         "senha": "a_safe_password",
+        "tipo": TipoCliente.USER,
     }
     cliente = ClienteCreate(**cliente_data)
     assert cliente.nome == "Ed Lourenco"
@@ -44,13 +45,13 @@ def test_cliente_model_from_orm():
         nome = "Jane Doe"
         email = "jane.doe@example.com"
         senha = "hashed_password"
-        tipo = TipoCliente.NORMAL
+        tipo = TipoCliente.USER
 
     cliente = Cliente.model_validate(OrmCliente())
     assert cliente.id == 1
     assert cliente.nome == "Jane Doe"
     assert cliente.email == "jane.doe@example.com"
-    assert cliente.tipo == TipoCliente.NORMAL
+    assert cliente.tipo == TipoCliente.USER
 
 
 def test_cliente_indb_model():
@@ -63,10 +64,38 @@ def test_cliente_indb_model():
         "tipo": TipoCliente.ADMIN,
     }
     cliente = ClienteInDB(**cliente_data)
-    assert cliente.senha == "a_real_hashed_password"
+    assert cliente.senha.get_secret_value() == "a_real_hashed_password"
 
 
 def test_cliente_model_invalid_email():
     """Testa que o Pydantic levanta um erro para um e-mail inválido."""
     with pytest.raises(ValidationError):
-        ClienteCreate(nome="Invalid", email="not-an-email", senha="password")
+        ClienteCreate(
+            nome="Invalid", email="not-an-email", senha="password", tipo=TipoCliente.USER
+        )
+
+    with pytest.raises(ValidationError):
+        ClienteCreate(nome="Invalid", email="test@.com", senha="password", tipo=TipoCliente.USER)
+
+    with pytest.raises(ValidationError):
+        ClienteCreate(
+            nome="Invalid", email="test@domain.", senha="password", tipo=TipoCliente.USER
+        )
+
+    with pytest.raises(ValidationError):
+        ClienteCreate(
+            nome="Invalid", email="@domain.com", senha="password", tipo=TipoCliente.USER
+        )
+
+
+def test_cliente_model_valid_email():
+    """Testa que o Pydantic aceita um e-mail válido."""
+    try:
+        ClienteCreate(
+            nome="Valid User",
+            email="valid.user@example.com",
+            senha="password",
+            tipo=TipoCliente.USER,
+        )
+    except ValidationError:
+        pytest.fail("A validação de e-mail válido falhou inesperadamente.")
