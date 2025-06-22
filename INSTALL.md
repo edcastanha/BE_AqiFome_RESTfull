@@ -24,11 +24,22 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 
    Isso irá construir as imagens (caso necessário) e iniciar os serviços definidos no arquivo `docker-compose.yml`.
 
+
 3. **Acesse a aplicação:**
+
+   Para ambiente de teste, você pode usar o comando para criar o primeiro cliente e popular o banco de dados:
+
+   ```bash
+   docker exec rest_api python src/scripts/seed.py
+   ```
+
+   Isso irá criar um cliente padrão e popular o banco de dados com alguns produtos favoritos.
 
    Após a inicialização, a aplicação estará disponível no endereço:
 
-   - http://localhost:8000
+   - http://localhost:8000/redoc (ReDoc para documentação da API)
+
+   - http://localhost:8000/docs (Swagger UI para documentação da API)
 
    (Verifique a porta configurada no `docker-compose.yml` ou no `Dockerfile` caso seja diferente)
 
@@ -40,12 +51,7 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
    docker-compose down -v
    ```
 
-   Para ambiente de teste, você pode usar o comando para criar o primeiro cliente e popular o banco de dados:
-
-   ```bash
-   docker exec rest_api python src/scripts/seed.py
-   ```
-
+   
 ---
 
 Se tiver dúvidas ou problemas, consulte a documentação oficial do Docker ou entre em contato com o responsável pelo projeto.
