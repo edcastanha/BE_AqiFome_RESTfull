@@ -34,10 +34,10 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 
 4. **Parar os containers:**
 
-   Para parar os containers, utilize:
+   Para parar os containers e excluir volume Postgres, utilize:
 
    ```bash
-   docker-compose down
+   docker-compose down -v
    ```
 
 ---

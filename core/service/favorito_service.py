@@ -1,5 +1,5 @@
 from typing import List
-from core.domain.favorito import Favorito, FavoritoResponse
+from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
 from core.domain.produto import Produto
 from core.repository.favorito_repository import FavoritoRepository
 from core.repository.produto_repository import ProdutoRepository
@@ -24,42 +24,57 @@ class FavoritoService:
         self.produto_repository = produto_repository
         self.fake_store_client = fake_store_client
 
-    async def adicionar_favorito(self, favorito: Favorito) -> Favorito:
+    async def adicionar_favoritos(self, cliente_id: int, produto_ids: List[int]) -> List[FavoritoResponse]:
         """
-        Adiciona um novo favorito para o cliente, validando duplicidade.
+        Adiciona uma lista de novos produtos favoritos para o cliente.
 
         Args:
-            favorito (Favorito): Dados do favorito a ser adicionado.
+            cliente_id (int): ID do cliente.
+            produto_ids (List[int]): Lista de IDs dos produtos a serem adicionados.
         Returns:
-            Favorito: Favorito criado.
+            List[FavoritoResponse]: Lista de favoritos criados.
         Raises:
-            ValueError: Se o produto já estiver nos favoritos do cliente ou não existir.
+            ValueError: Se algum produto já for favorito ou não existir.
         """
-        if self.repository.exists(favorito.cliente_id, favorito.produto_id):
-            raise ValueError("Produto já está nos favoritos do cliente")
+        favoritos_para_criar = []
+        produtos_processados = set()
 
-        produto = self.produto_repository.get_by_id(favorito.produto_id)
-        # Se não estiver no cache, busca na API externa
-        if not produto:
-            produto_externo = await self.fake_store_client.get_product(favorito.produto_id)
-            if not produto_externo:
-                raise ValueError("Produto não encontrado")
+        for produto_id in produto_ids:
+            if produto_id in produtos_processados:
+                continue
 
-            # Cria o objeto Produto com os dados externos, agora com todos os campos
-            produto = Produto(
-                id=produto_externo['id'],
-                titulo=produto_externo['title'],
-                preco=produto_externo['price'],
-                descricao=produto_externo.get('description'),
-                categoria=produto_externo.get('category'),
-                imagem=produto_externo['image'],
-                avaliacao=produto_externo.get('rating', {}).get('rate')
-            )
-            # Salva o novo produto no nosso banco de dados (cache)
-            self.produto_repository.create(produto)
+            if self.repository.exists(cliente_id, produto_id):
+                # Pular produtos que já são favoritos em vez de lançar um erro
+                continue
 
-        # Cria a associação do favorito no banco de dados
-        return self.repository.create(favorito)
+            produto = self.produto_repository.get_by_id(produto_id)
+            if not produto:
+                produto_externo = await self.fake_store_client.get_product(produto_id)
+                if not produto_externo:
+                    # Pular produtos não encontrados na API externa
+                    continue
+                
+                produto = Produto(
+                    id=produto_externo['id'],
+                    titulo=produto_externo['title'],
+                    preco=produto_externo['price'],
+                    descricao=produto_externo.get('description'),
+                    categoria=produto_externo.get('category'),
+                    imagem=produto_externo['image'],
+               )
+                self.produto_repository.create(produto)
+
+            favoritos_para_criar.append(FavoritoCreate(cliente_id=cliente_id, produto_id=produto_id))
+            produtos_processados.add(produto_id)
+
+        if not favoritos_para_criar:
+            # Se nenhum favorito novo foi adicionado, retorna a lista atual
+            return self.listar_favoritos(cliente_id)
+
+        self.repository.create_many(favoritos_para_criar)
+        
+        # Retorna a lista completa e atualizada de favoritos
+        return self.listar_favoritos(cliente_id)
 
     def listar_favoritos(self, cliente_id: int) -> List[FavoritoResponse]:
         """

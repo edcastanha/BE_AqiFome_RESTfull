@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from uuid import UUID
+import logging
 
 from core.externos.fake_store_client import FakeStoreClient
 from core.config.db import SessionLocal, Base, engine
@@ -15,6 +15,13 @@ from core.repository.favorito_repository import FavoritoRepository
 from core.repository.produto_repository import ProdutoRepository
 from core.service.cliente_service import ClienteService
 from core.service.favorito_service import FavoritoService
+
+logger = logging.getLogger("uvicorn.error")
+# Configuração do logger
+logging.basicConfig(
+    level=logging.WARN,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)   
 
 app = FastAPI(title="AqiFome RESTful API")
 
@@ -93,27 +100,24 @@ def deletar_cliente(cliente_id: int, db: Session = Depends(get_db)):
     summary="Adicionar um produto aos favoritos de um cliente",
     tags=["Favoritos"],
 )
-async def adicionar_favorito(
+async def adicionar_favoritos(
     cliente_id: int,
     request_data: FavoritoCreateRequest,
-    
     service: FavoritoService = Depends(get_favorito_service),
 ):
     """
-    Adiciona um produto à lista de favoritos de um cliente específico.
+    Adiciona um ou mais produtos à lista de favoritos de um cliente.
     """
     try:
-        # O papel do endpoint é apenas preparar os dados para o serviço.
-        favorito_para_criar = FavoritoCreate(
-            cliente_id=cliente_id, produto_id=request_data.produto_id
+        favoritos_criados = await service.adicionar_favoritos(
+            cliente_id=cliente_id, produto_ids=request_data.produto_ids
         )
-
-        favorito_criado = await service.adicionar_favorito(favorito_para_criar)
-        return favorito_criado
-        
+        return favoritos_criados
     except ValueError as e:
+        logger.error(f"Erro ao adicionar favoritos: {e}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        logger.error(f"Erro ao adicionar favoritos: {e}")
         raise HTTPException(status_code=500, detail=f"Ocorreu um erro interno: {e}")
 
 @app.get("/clientes/{cliente_id}/favoritos", response_model=list[FavoritoResponse])

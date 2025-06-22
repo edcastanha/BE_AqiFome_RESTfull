@@ -1,4 +1,4 @@
-from core.domain.favorito import Favorito
+from core.domain.favorito import Favorito, FavoritoCreate
 from core.config.db import SessionLocal
 from core.repository.favorito_orm import FavoritoORM
 from sqlalchemy.orm import Session
@@ -18,23 +18,21 @@ class FavoritoRepository:
         """
         self.db = db or SessionLocal()
 
-    def create(self, favorito: Favorito) -> Favorito:
+    def create_many(self, favoritos: List[FavoritoCreate]) -> List[Favorito]:
         """
-        Cria um novo favorito para um cliente.
+        Cria múltiplos favoritos para um cliente em uma única transação.
 
         Args:
-            favorito (Favorito): Dados do favorito a ser criado.
+            favoritos (List[FavoritoCreate]): Lista de dados dos favoritos a serem criados.
         Returns:
-            Favorito: Favorito criado com ID atribuído.
+            List[Favorito]: Lista de favoritos criados com IDs atribuídos.
         """
-        db_fav = FavoritoORM(
-            cliente_id=favorito.cliente_id,
-            produto_id=favorito.produto_id
-        )
-        self.db.add(db_fav)
+        db_favoritos = [FavoritoORM(cliente_id=f.cliente_id, produto_id=f.produto_id) for f in favoritos]
+        self.db.add_all(db_favoritos)
         self.db.commit()
-        self.db.refresh(db_fav)
-        return Favorito.model_validate(db_fav)
+        for db_fav in db_favoritos:
+            self.db.refresh(db_fav)
+        return [Favorito.model_validate(fav) for fav in db_favoritos]
 
     def list_by_cliente(self, cliente_id: int) -> List[Favorito]:
         """
