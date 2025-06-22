@@ -1,56 +1,79 @@
 import pytest
-from core.repository.favorito_repository import FavoritoRepository
-from core.domain.favorito import Favorito
+from unittest.mock import MagicMock, call
 from sqlalchemy.orm import Session
-from unittest.mock import MagicMock
+from core.repository.favorito_repository import FavoritoRepository
+from core.domain.favorito import FavoritoCreate
+from core.repository.favorito_orm import FavoritoORM
+
 
 @pytest.fixture
 def mock_db():
+    """Fixture que cria um mock para a sessão do banco de dados."""
     return MagicMock(spec=Session)
 
+
 @pytest.fixture
-def repo(mock_db):
+def repository(mock_db):
+    """Fixture que cria uma instância do repositório com o DB mockado."""
     return FavoritoRepository(db=mock_db)
 
-def test_create_favorito(db_session):
-    """Testa a criação de um novo favorito no repositório."""
-    repo = FavoritoRepository(db_session)
-    novo_favorito = Favorito(cliente_id=cliente.id, produto_id=produto.id)
 
-    favorito_criado = repo.create(novo_favorito)
+def test_create_many(repository, mock_db):
+    """Testa a criação de múltiplos favoritos em lote."""
+    favoritos_data = [
+        FavoritoCreate(cliente_id=1, produto_id=10),
+        FavoritoCreate(cliente_id=1, produto_id=20),
+    ]
 
-    assert favorito_criado.id is not None
-    assert favorito_criado.cliente_id == cliente.id
-    assert favorito_criado.produto_id == produto.id
+    repository.create_many(favoritos_data)
 
-def test_list_by_cliente(repo, mock_db):
-    favoritos_orm = [MagicMock(), MagicMock()]
-    mock_db.query.return_value.filter.return_value.all.return_value = favoritos_orm
-    Favorito.from_orm = MagicMock(side_effect=[Favorito(id=1, cliente_id=1, produto_id=1, titulo="A", imagem="", preco=1, review=""), Favorito(id=2, cliente_id=1, produto_id=2, titulo="B", imagem="", preco=2, review="")])
-    result = repo.list_by_cliente(1)
+    assert mock_db.add_all.call_count == 1
+    mock_db.commit.assert_called_once()
+
+
+def test_list_by_cliente(repository, mock_db):
+    """Testa a listagem de favoritos por cliente."""
+    mock_favoritos_orm = [FavoritoORM(), FavoritoORM()]
+    mock_db.query.return_value.filter.return_value.all.return_value = mock_favoritos_orm
+
+    result = repository.list_by_cliente(cliente_id=1)
+
+    mock_db.query.assert_called_once_with(FavoritoORM)
     assert len(result) == 2
-    assert result[0].titulo == "A"
-    assert result[1].titulo == "B"
 
-def test_delete_favorito_found(repo, mock_db):
-    db_fav = MagicMock()
-    mock_db.query.return_value.filter.return_value.first.return_value = db_fav
-    mock_db.delete.return_value = None
-    mock_db.commit.return_value = None
-    result = repo.delete(1, 2)
+
+def test_delete_favorito_found(repository, mock_db):
+    """Testa a remoção de um favorito que existe."""
+    mock_favorito = FavoritoORM()
+    mock_db.query.return_value.filter.return_value.first.return_value = mock_favorito
+
+    result = repository.delete(cliente_id=1, produto_id=1)
+
+    mock_db.delete.assert_called_once_with(mock_favorito)
+    mock_db.commit.assert_called_once()
     assert result is True
 
-def test_delete_favorito_not_found(repo, mock_db):
+
+def test_delete_favorito_not_found(repository, mock_db):
+    """Testa a tentativa de remoção de um favorito que não existe."""
     mock_db.query.return_value.filter.return_value.first.return_value = None
-    result = repo.delete(1, 2)
+
+    result = repository.delete(cliente_id=1, produto_id=99)
+
+    mock_db.delete.assert_not_called()
+    mock_db.commit.assert_not_called()
     assert result is False
 
-def test_exists_true(repo, mock_db):
-    mock_db.query.return_value.filter.return_value.first.return_value = MagicMock()
-    result = repo.exists(1, 2)
+
+def test_exists_true(repository, mock_db):
+    """Testa a verificação de existência quando o favorito existe."""
+    mock_db.query.return_value.filter.return_value.first.return_value = FavoritoORM()
+    result = repository.exists(cliente_id=1, produto_id=1)
     assert result is True
 
-def test_exists_false(repo, mock_db):
+
+def test_exists_false(repository, mock_db):
+    """Testa a verificação de existência quando o favorito não existe."""
     mock_db.query.return_value.filter.return_value.first.return_value = None
-    result = repo.exists(1, 2)
+    result = repository.exists(cliente_id=1, produto_id=99)
     assert result is False

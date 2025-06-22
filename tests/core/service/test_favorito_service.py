@@ -107,3 +107,35 @@ async def test_adicionar_favoritos_sem_novos_favoritos(mock_dependencies):
     mock_repo.create_many.assert_not_called()
     service.listar_favoritos.assert_called_once_with(1)
     assert len(resultado) == 1 # Deve retornar a lista existente
+
+
+async def test_remover_favorito_com_sucesso(mock_dependencies):
+    """Testa a remoção de um favorito com sucesso."""
+    mock_repo, mock_produto_repo, mock_client = mock_dependencies
+    service = FavoritoService(mock_repo, mock_produto_repo, mock_client)
+
+    # Configuração
+    mock_repo.delete.return_value = True
+
+    # Execução
+    resultado = service.remover_favorito(cliente_id=1, produto_id=1)
+
+    # Verificação
+    mock_repo.delete.assert_called_once_with(cliente_id=1, produto_id=1)
+    assert resultado is True
+
+
+async def test_remover_favorito_nao_encontrado(mock_dependencies):
+    """Testa a remoção de um favorito que não existe."""
+    mock_repo, mock_produto_repo, mock_client = mock_dependencies
+    service = FavoritoService(mock_repo, mock_produto_repo, mock_client)
+
+    # Configuração
+    mock_repo.delete.return_value = False
+
+    # Execução
+    resultado = service.remover_favorito(cliente_id=1, produto_id=999)
+
+    # Verificação
+    mock_repo.delete.assert_called_once_with(cliente_id=1, produto_id=999)
+    assert resultado is False
