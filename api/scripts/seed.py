@@ -24,7 +24,7 @@ def seed_database():
     try:
         admin_email = os.getenv("SEED_ADMIN_EMAIL")
         admin_password = os.getenv("SEED_ADMIN_PASSWORD")
-        admin_nome = os.getenv("SEED_admin_nome")
+        admin_nome = os.getenv("SEED_ADMIN_NAME")
         admin_tipo = os.getenv("SEED_ADMIN_TIPO")
 
         tipo_map = {"ADMIN": 1, "USER": 0}

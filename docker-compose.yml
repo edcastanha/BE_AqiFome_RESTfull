@@ -9,6 +9,12 @@ services:
     env_file:
       - .env.container
     restart: always
+    # Aguardar o start de DB
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   db:
     image: postgres:15

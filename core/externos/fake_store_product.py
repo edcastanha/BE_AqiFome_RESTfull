@@ -1,7 +1,7 @@
 import httpx
 from typing import Optional
 
-class FakeStoreClient:
+class FakeStoreProduct:
     BASE_URL = "https://fakestoreapi.com"
 
     async def get_product(self, product_id: int) -> Optional[dict]:

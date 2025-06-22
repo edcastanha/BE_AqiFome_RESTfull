@@ -31,7 +31,7 @@ class ClienteService:
         if self.repository.get_by_email(cliente_data.email):
             raise ValueError("E-mail já cadastrado")
 
-        hashed_password = get_password_hash(cliente_data.senha)
+        hashed_password = get_password_hash(cliente_data.senha.get_secret_value())
         cliente_com_senha_hash = cliente_data.model_copy(
             update={"senha": hashed_password}
         )

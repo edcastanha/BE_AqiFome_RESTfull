@@ -3,7 +3,6 @@ uvicorn
 sqlalchemy
 psycopg2-binary
 python-dotenv
-passlib[bcrypt]
 python-jose[cryptography]
 pydantic-settings
 python-multipart
@@ -11,3 +10,5 @@ httpx
 pytest-asyncio
 pytest-cov
 email-validator
+passlib==1.7.4
+bcrypt==3.2.2

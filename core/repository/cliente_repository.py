@@ -34,7 +34,7 @@ class ClienteRepository:
         self.db.add(db_cliente)
         self.db.commit()
         self.db.refresh(db_cliente)
-        return Cliente.from_orm(db_cliente)
+        return Cliente.model_validate(db_cliente)
 
     def get_by_id(self, cliente_id: int) -> Optional[Cliente]:
         """
@@ -46,7 +46,7 @@ class ClienteRepository:
             Optional[Cliente]: Cliente encontrado ou None.
         """
         db_cliente = self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
-        return Cliente.from_orm(db_cliente) if db_cliente else None
+        return Cliente.model_validate(db_cliente) if db_cliente else None
 
     def get_by_email(self, email: str) -> Optional[ClienteInDB]:
         """

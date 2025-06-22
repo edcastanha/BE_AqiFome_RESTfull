@@ -64,7 +64,7 @@ def test_cliente_indb_model():
         "tipo": TipoCliente.ADMIN,
     }
     cliente = ClienteInDB(**cliente_data)
-    assert cliente.senha == "a_real_hashed_password"
+    assert cliente.senha.get_secret_value() == "a_real_hashed_password"
 
 
 def test_cliente_model_invalid_email():

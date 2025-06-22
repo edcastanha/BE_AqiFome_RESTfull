@@ -50,6 +50,7 @@ Você pode escolher uma das seguintes linguagens:
 PostgreSQL
 
 ## 🛠️ Ferramentas Sugerida execução do projeto localmente
+
     - Docker
     - Docker Compose
 
@@ -60,3 +61,75 @@ PostgreSQL
 - [ReDoc](http://localhost:8000/redoc) para documentação da API
 
 - [Swagger UI](http://localhost:8000/docs) para documentação da API
+
+
+## Teste Web
+Para testar a API, você pode usar ferramentas como Postman ou Insomnia, ou até mesmo o Swagger UI integrado na aplicação.
+
+Realize o procedimento para criacao de ADMIN executando o seguinte comando:
+
+```bash
+docker exec rest_api python src/scripts/seed.py
+```
+
+Resultando na criação de um cliente padrão e popular o banco de dados:
+**EMAIL=** edson@aiqfome.com
+**PASSWORD=** aiQfome123
+
+Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.local](.env.container).
+
+
+![Auhtenticação](arquitetura_docs/img/auth_admin_seed.png)
+
+
+## 📝 Documentação
+A documentação da API está disponível no Swagger UI e ReDoc, acessíveis após a inicialização do ambiente local.
+
+## 📦 Estrutura do Projeto
+## 📦 Estrutura do Projeto
+
+A estrutura do projeto foi cuidadosamente planejada para garantir organização, escalabilidade e facilidade de manutenção, seguindo padrões recomendados para aplicações FASTAPI. Os principais diretórios e arquivos estão descritos abaixo:
+
+```
+BE_AqiFome_RESTfull/
+├── core/                  # Lógica central da aplicação
+│   ├── __init__.py
+│   ├── config/            # Configurações e conexão com o banco de dados
+│   │   ├── __init__.py
+│   │   ├── db.py
+│   │   └── settings.py
+│   ├── domain/            # Modelos de domínio (entidades e schemas)
+│   │   ├── __init__.py
+│   │   ├── cliente.py
+│   │   ├── favorito.py
+│   │   └── produto.py
+│   ├── externos/          # Definição de APIs externas
+│   │   ├── __init__.py
+│   │   └── fake_store_product.py
+│   ├── repository/        # Camada de acesso a dados (repositórios)
+│   ├── security/          # Autenticação e autorização
+│   └── service/           # Regras de negócio e serviços
+├── api/
+│   ├── main.py            # Ponto de entrada da aplicação FASTAPI
+│   └── scripts/
+│       ├── __init__.py
+│       └── seed.py        # Script para popular dados iniciais (ex: usuário admin)
+├── arquitetura_docs/      # Documentação de arquitetura e imagens
+├── tests/                 # Testes automatizados
+├── requirements.txt       # Dependências do projeto
+├── Dockerfile             # Dockerfile para build da aplicação
+├── docker-compose.yml     # Orquestração de containers
+├── INSTALL.md             # Guia de instalação e execução local
+├── .env.container         # Variáveis de ambiente para o container
+└── README.md              # Documentação principal do projeto
+```
+
+**Principais pontos:**
+- **core/**: Centraliza a lógica de negócio, modelos, configurações e segurança.
+- **api/**: Contém o ponto de entrada da aplicação e scripts utilitários.
+- **tests/**: Facilita a manutenção da qualidade do código com testes automatizados.
+- **arquitetura_docs/**: Armazena diagramas e imagens de apoio à documentação.
+- **Docker e Compose**: Permitem fácil deploy e replicação do ambiente de desenvolvimento.
+
+Essa organização facilita a colaboração, a escalabilidade e a manutenção do projeto ao longo do tempo.
+
