@@ -29,16 +29,12 @@ class FavoritoRepository:
         """
         db_fav = FavoritoORM(
             cliente_id=favorito.cliente_id,
-            produto_id=favorito.produto_id,
-            titulo=favorito.titulo,
-            imagem=favorito.imagem,
-            preco=favorito.preco,
-            review=favorito.review
+            produto_id=favorito.produto_id
         )
         self.db.add(db_fav)
         self.db.commit()
         self.db.refresh(db_fav)
-        return Favorito.from_orm(db_fav)
+        return Favorito.model_validate(db_fav)
 
     def list_by_cliente(self, cliente_id: int) -> List[Favorito]:
         """
@@ -49,7 +45,7 @@ class FavoritoRepository:
         Returns:
             List[Favorito]: Lista de favoritos do cliente.
         """
-        return [Favorito.from_orm(f) for f in self.db.query(FavoritoORM).filter(FavoritoORM.cliente_id == cliente_id).all()]
+        return [Favorito.model_validate(f) for f in self.db.query(FavoritoORM).filter(FavoritoORM.cliente_id == cliente_id).all()]
 
     def delete(self, cliente_id: int, produto_id: int) -> bool:
         """

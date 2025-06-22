@@ -69,7 +69,7 @@
 
 ## 9. Documentação
 
-- [ ] **Documentar a API (OpenAPI/Swagger)**  
+- [x] **Documentar a API (OpenAPI/Swagger)**  
     - Gerar documentação automática e exemplos de uso
 - [ ] **Escrever instruções de instalação e uso**
 

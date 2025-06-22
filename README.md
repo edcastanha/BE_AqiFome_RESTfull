@@ -14,13 +14,15 @@ Desenvolva uma API RESTful que permita:
 Criar, visualizar, editar e remover clientes.
 Dados obrigatórios: nome e e-mail.
 Um mesmo e-mail não pode se repetir no cadastro.
+
 **Favoritos**
 Um cliente deve ter uma lista de produtos favoritos.
 Os produtos devem ser validados via API externa (link fornecido abaixo).
 Um produto não pode ser duplicado na lista de um cliente.
 Produtos favoritos devem exibir: ID, título, imagem, preço e review (se houver).
+
 **Requisitos de Integração**
- Sugerimos o uso de uma API genérica para buscar produtos. Porém, para facilitar a execução e deixar tudo mais direto ao ponto, recomendamos o uso da seguinte API pública:
+ Sugerimos o uso de uma API genérica para buscar produtos. Porém, para facilitar a execução e deixar tudo mais direto ao ponto,recomendamos o uso da seguinte API pública:
 
 🔗 https://fakestoreapi.com/docs
 
@@ -46,10 +48,6 @@ Não use IA ou cópias. Será passível de eliminação.
 Você pode escolher uma das seguintes linguagens:
 * Go
 * Python 
-* PHP
-* Node.js (Javascript ou Typescript)
-* Ou outra linguagem (sem apego!)
-
 
 ### 🗄️ Banco de Dados sugerido:
 PostgreSQL (preferencial)

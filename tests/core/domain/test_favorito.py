@@ -11,3 +11,10 @@ def test_favorito_model():
     assert favorito.review == "Ótimo!"
     # Testa representação
     assert str(favorito) == str(favorito)
+
+def test_criar_favorito_com_dados_validos():
+    """Testa a criação de um Favorito com dados válidos."""
+    favorito = Favorito(id=1, cliente_id=1, produto_id=101)
+    assert favorito.id == 1
+    assert favorito.cliente_id == 1
+    assert favorito.produto_id == 101

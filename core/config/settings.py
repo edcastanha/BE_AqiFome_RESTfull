@@ -18,6 +18,9 @@ class Settings(BaseSettings):
         db_user (str): Usuário do banco de dados.
         db_pass (str): Senha do banco de dados.
         db_name (str): Nome do banco de dados.
+        secret_key (str): Chave secreta para assinar tokens JWT.
+        algorithm (str): Algoritmo de assinatura JWT.
+        access_token_expire_minutes (int): Tempo de expiração do token de acesso.
     """
 
     db_host: str = os.getenv("DB_HOST", "localhost")
@@ -25,6 +28,9 @@ class Settings(BaseSettings):
     db_user: str = os.getenv("DB_USER", "postgres")
     db_pass: str = os.getenv("DB_PASS", "postgres")
     db_name: str = os.getenv("DB_NAME", "postgres")
+    secret_key: str = os.getenv("SECRET_KEY", "22fe53ced2c099e3f81f42cbb1ef7e2daeb120cf858184c25072d9cce611e2bb")
+    algorithm: str = os.getenv("ALGORITHM", "HS256")
+    access_token_expire_minutes: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
     # Mantendo model_config apenas para compatibilidade com o Pydantic
     model_config = {
