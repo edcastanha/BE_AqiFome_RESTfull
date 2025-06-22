@@ -3,6 +3,12 @@ from typing import Optional
 from core.domain.produto import Produto
 from core.repository.produto_orm import ProdutoORM
 from core.config.db import SessionLocal
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.WARN) 
+
+
 
 class ProdutoRepository:
     """
@@ -27,8 +33,16 @@ class ProdutoRepository:
             titulo=produto.titulo,
             imagem=produto.imagem,
             preco=produto.preco,
-            review=produto.review
-        )
+            descricao=produto.descricao,
+            categoria=produto.categoria)
+        
+        # Verifica se o produto já existe pelo ID
+        existing_produto = self.get_by_id(produto.id)
+        if existing_produto:
+            logger.warning(f"Produto com ID {produto.id} já existe.")
+            raise ValueError(f"Produto com ID {produto.id} já existe.")
+        
+        # Adiciona o novo produto ao banco de dados
         self.db.add(db_produto)
         self.db.commit()
         self.db.refresh(db_produto)

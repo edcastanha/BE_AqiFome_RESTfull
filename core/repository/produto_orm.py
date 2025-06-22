@@ -12,7 +12,14 @@ class ProdutoORM(Base):
     id = Column(Integer, primary_key=True, index=True)
     titulo = Column(String, nullable=False)
     preco = Column(Float, nullable=False)
-    descricao = Column(String, nullable=True)
-    categoria = Column(String, nullable=True)
+    descricao = Column(String, nullable=False)
+    categoria = Column(String, nullable=False)
     imagem = Column(String, nullable=False)
-    avaliacao = Column(Float, nullable=True)
+
+    def __init__(self, *args, **kwargs):
+        if 'imagem' in kwargs and hasattr(kwargs['imagem'], 'unicode_string'):
+            kwargs['imagem'] = kwargs['imagem'].unicode_string()
+        elif 'imagem' in kwargs and not isinstance(kwargs['imagem'], str):
+            kwargs['imagem'] = str(kwargs['imagem'])
+
+        super().__init__(*args, **kwargs)

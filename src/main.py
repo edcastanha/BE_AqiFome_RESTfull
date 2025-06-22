@@ -95,7 +95,7 @@ def deletar_cliente(cliente_id: int, db: Session = Depends(get_db)):
 # --- Favoritos ---
 @app.post(
     "/clientes/{cliente_id}/favoritos",
-    response_model=FavoritoResponse,
+    response_model=list[FavoritoResponse],  # Correção aqui
     status_code=status.HTTP_201_CREATED,
     summary="Adicionar um produto aos favoritos de um cliente",
     tags=["Favoritos"],
