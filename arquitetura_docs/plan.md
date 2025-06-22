@@ -37,7 +37,7 @@
     - Criar migrations e scripts de inicialização
 - [x] **Implementar repositórios concretos**  
     - Usar ORM para persistência
-- [ ] **Implementar integração com Fake Store API**  
+- [x] **Implementar integração com Fake Store API**  
     - Serviços para buscar e validar produtos externos
 
 ## 5. Camada de Aplicação
@@ -45,7 +45,9 @@
 - [x] **Implementar casos de uso (Use Cases/Application Services)**  
     - Cadastro, edição, remoção e listagem de clientes
     - Adição, remoção e listagem de favoritos
-- [ ] **Implementar DTOs e mapeamentos**
+- [x] **Implementar DTOs e mapeamentos**
+    - Criar modelos de transferência de dados (DTOs) para comunicação entre camadas
+    - Utilizar bibliotecas como Pydantic para validação e serialização
 
 ## 6. Camada de Apresentação (API)
 
@@ -62,27 +64,21 @@
 
 ## 8. Testes
 
-- [ ] **Testes unitários**  
+- [x] **Testes unitários**  
     - Cobrir entidades, serviços de domínio e casos de uso
-- [ ] **Testes de integração**  
+- [X] **Testes de integração**  
     - Testar endpoints e integração com banco/API externa
 
 ## 9. Documentação
 
 - [x] **Documentar a API (OpenAPI/Swagger)**  
     - Gerar documentação automática e exemplos de uso
-- [ ] **Escrever instruções de instalação e uso**
+- [x] **Escrever instruções de instalação e uso**
 
 ## 10. Revisão e Refino
 
 - [ ] **Revisão de código (Code Review)**  
     - Garantir aderência a SOLID, Clean Code e DDD
 - [ ] **Ajustes finais e deploy**
-
----
-
-> **Observações:**  
-- Priorizar clareza, modularidade e separação de responsabilidades.  
-- Evitar duplicidade de dados e garantir integridade referencial.  
-- Manter documentação e código sempre atualizados.
-```
+- [ ] **Preparar ambiente de produção**  
+    - Configurar Docker e Docker Compose para deploy

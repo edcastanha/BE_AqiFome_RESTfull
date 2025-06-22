@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock, patch
-from unittest.mock import MagicMock, patch
 import pytest
-from core.domain.cliente import ClienteCreate, TipoCliente
+from core.domain.cliente import ClienteCreate, ClienteUpdate, TipoCliente
 from core.service.cliente_service import ClienteService
+from pydantic import SecretStr
 
 
 @patch('core.service.cliente_service.get_password_hash')
@@ -43,3 +43,55 @@ def test_criar_cliente_com_email_existente():
 
     with pytest.raises(ValueError, match="E-mail já cadastrado"):
         service.criar_cliente(cliente_data)
+
+
+@patch('core.service.cliente_service.get_password_hash')
+def test_atualizar_cliente_com_senha(mock_get_password_hash):
+    """
+    Testa a atualização de um cliente, incluindo a senha,
+    verificando se a senha é hasheada corretamente.
+    """
+    # Configuração
+    mock_repo = MagicMock()
+    mock_get_password_hash.return_value = "nova_senha_hasheada"
+    service = ClienteService(mock_repo)
+    cliente_id = 1
+    update_data = ClienteUpdate(
+        nome="Novo Nome",
+        senha=SecretStr("nova_senha_123")
+    )
+
+    # Ação
+    service.atualizar_cliente(cliente_id, update_data)
+
+    # Verificação
+    mock_get_password_hash.assert_called_once_with("nova_senha_123")
+    mock_repo.update.assert_called_once()
+
+    # Verifica se o repositório foi chamado com os dados corretos
+    args, _ = mock_repo.update.call_args
+    assert args[0] == cliente_id
+    update_payload = args[1]
+    assert update_payload["nome"] == "Novo Nome"
+    assert update_payload["senha"] == "nova_senha_hasheada"
+
+
+def test_atualizar_cliente_sem_senha():
+    """
+    Testa a atualização de um cliente sem modificar a senha.
+    """
+    # Configuração
+    mock_repo = MagicMock()
+    service = ClienteService(mock_repo)
+    cliente_id = 1
+    update_data = ClienteUpdate(nome="Outro Nome")
+
+    # Ação
+    service.atualizar_cliente(cliente_id, update_data)
+
+    # Verificação
+    mock_repo.update.assert_called_once()
+    args, _ = mock_repo.update.call_args
+    assert args[0] == cliente_id
+    update_payload = args[1]
+    assert "senha" not in update_payload

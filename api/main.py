@@ -82,9 +82,15 @@ def error_response(status_code: int, message: str) -> JSONResponse:
         content={"error": {"code": status_code, "message": message}},
     )
 
+@app.get("/")
+def root():
+    return {"message": "API Online"}
 
 @app.post("/token")
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(), 
+    db: Session = Depends(get_db)
+    ):
     cliente_repo = ClienteRepository(db)
     user = cliente_repo.get_by_email(email=form_data.username)
     if not user or not verify_password(form_data.password, user.senha.get_secret_value()):
@@ -92,20 +98,9 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
-
-@app.get("/")
-def root():
-    return {"message": "API Online"}
-
 # --- Clientes ---
 @app.post("/clientes", response_model=Cliente)
-def criar_cliente(
-    cliente: ClienteCreate, 
-    db: Session = Depends(get_db), 
-    request: Optional[Request] = None,
-    summary="Manipula Clientes",
-    tags=["Clientes"],
-):
+def criar_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     """
     Cria um novo cliente.
     O cliente deve fornecer ao menos e-mail e senha.
@@ -113,11 +108,7 @@ def criar_cliente(
     """
     service = ClienteService(ClienteRepository(db))
     try:
-        hashed_password = get_password_hash(cliente.senha.get_secret_value())
-        cliente_com_senha_hash = cliente.model_copy(
-            update={"senha": hashed_password}
-        )
-        return service.criar_cliente(cliente_com_senha_hash)
+        return service.criar_cliente(cliente)
     except ValueError as e:
         logger.warning(f"Erro de validação ao criar cliente: {e}")
         return error_response(400, str(e))

@@ -1,7 +1,6 @@
 from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
 from core.repository.cliente_repository import ClienteRepository
 from core.security.security import get_password_hash
-from core.security.security import get_password_hash
 
 class ClienteService:
     """
@@ -9,18 +8,7 @@ class ClienteService:
 
     Responsável por validações e operações de alto nível envolvendo clientes.
     """
-    """
-    Serviço de regras de negócio para clientes.
-
-    Responsável por validações e operações de alto nível envolvendo clientes.
-    """
     def __init__(self, repository: ClienteRepository):
-        """
-        Inicializa o serviço de clientes.
-
-        Args:
-            repository (ClienteRepository): Instância do repositório de clientes.
-        """
         """
         Inicializa o serviço de clientes.
 
@@ -42,7 +30,7 @@ class ClienteService:
         """
         if self.repository.get_by_email(cliente_data.email):
             raise ValueError("E-mail já cadastrado")
-
+        # Hash da senha antes de salvar
         hashed_password = get_password_hash(cliente_data.senha.get_secret_value())
         cliente_com_senha_hash = cliente_data.model_copy(
             update={"senha": hashed_password}
@@ -51,12 +39,6 @@ class ClienteService:
         return self.repository.create(cliente_com_senha_hash)
 
     def listar_clientes(self):
-        """
-        Lista todos os clientes cadastrados.
-
-        Returns:
-            list[Cliente]: Lista de clientes.
-        """
         """
         Lista todos os clientes cadastrados.
 
@@ -94,7 +76,14 @@ class ClienteService:
         Returns:
             Cliente ou None: Cliente atualizado ou None se não encontrado.
         """
-        return self.repository.update(cliente_id, cliente_update)
+        update_data = cliente_update.model_dump(exclude_unset=True)
+
+        if "senha" in update_data and cliente_update.senha is not None:
+            # Extrai o valor do SecretStr e gera o hash
+            senha_str = cliente_update.senha.get_secret_value()
+            update_data["senha"] = get_password_hash(senha_str)
+
+        return self.repository.update(cliente_id, update_data)
 
     def deletar_cliente(self, cliente_id: int):
         """

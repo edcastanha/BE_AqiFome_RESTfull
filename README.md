@@ -1,95 +1,90 @@
 # API RESTfull - AQIFome
 
+
+## Considerações 
+
+Este projeto foi desenvolvido com foco em boas práticas de desenvolvimento, organização de código e documentação clara. Aplicando SOLID, DDD e princípios de Clean Architecture, a API está preparada para atender às demandas de alta performance e escalabilidade ou troca de framework, caso necessário.
+
+Observou-se a necessidade de autenticação e autorização, implementando um sistema de autenticação JWT para garantir a segurança das operações. A API foi projetada para ser facilmente extensível, permitindo a adição de novas funcionalidades no futuro sem comprometer a estrutura existente.
+
+A escolha do PostgreSQL como banco de dados relacional garante robustez e confiabilidade, enquanto o uso de Docker e Docker Compose facilita a configuração e o deploy do ambiente de desenvolvimento.
+
+Obs.: Pensando em maior escalabilidade conforme requisitos futuros, pode-se considerar a possibilidade de utilizar o Redis para cache de produtos favoritos, melhorando a performance em consultas frequentes ou aplicação de mensageria para processamento assíncrono de tarefas, como consulta de API externa ou atualizações de produtos favoritos.
+
+### [ARD - Arquitetura do Projeto](arquitetura_docs/plan.md)
+
+A API foi desenvolvida utilizando o framework FastAPI, que oferece alta performance e facilidade de uso, além de suporte nativo para documentação automática via Swagger e ReDoc. A estrutura do projeto segue as melhores práticas de organização, com separação clara entre camadas de domínio, serviços, repositórios e APIs externas.
+
+A implementação inclui endpoints para gerenciar clientes e produtos favoritos, com validações rigorosas para garantir a integridade dos dados. A autenticação é realizada através de tokens JWT, garantindo que apenas usuários autenticados possam acessar as funcionalidades da API.
+
+
+
 ======================
+
 ## Contexto
 
 O aiqfome está expandindo seus canais de integração e precisa de uma API robusta para gerenciar os "produtos favoritos" de usuários na plataforma.
 Essa funcionalidade será usada por apps e interfaces web para armazenar e consultar produtos marcados como favoritos pelos clientes. A API terá alto volume de uso e integrará com outros sistemas internos e externos.
 
 ## 🔧 Desafio:
-Desenvolva uma API RESTful que permita:
+Desenvolva uma API RESTful que permita: [DESAFIO COMPLETO](DESAFIO.md)
 
 **Clientes**
 Criar, visualizar, editar e remover clientes(ADMIN).
 Dados obrigatórios: nome e e-mail.
 Um mesmo e-mail não pode se repetir no cadastro.
 
-
 **Favoritos**
 Um cliente deve ter uma lista de produtos favoritos.
 Os produtos devem ser validados via API externa (link fornecido abaixo).
 Um produto não pode ser duplicado na lista de um cliente.
 Produtos favoritos devem exibir: ID, título, imagem, preço e review (se houver).
-
-
-**Requisitos de Integração**
- Sugerimos o uso de uma API genérica para buscar produtos. Porém, para facilitar a execução e deixar tudo mais direto ao ponto,recomendamos o uso da seguinte API pública:
- Sugerimos o uso de uma API genérica para buscar produtos. Porém, para facilitar a execução e deixar tudo mais direto ao ponto,recomendamos o uso da seguinte API pública:
-
-🔗 https://fakestoreapi.com/docs
-
+#### 🌐 API Externa
 Você pode utilizar especificamente estes dois endpoints:
+* Listar todos os produtos:🔗 GET https://fakestoreapi.com/products
+* Buscar produto por ID: 🔗 GET https://fakestoreapi.com/products/{id}
 
-Listar todos os produtos:
-🔗 GET https://fakestoreapi.com/products
-
-Buscar produto por ID:
-🔗 GET https://fakestoreapi.com/products/{id}
-
-## ⚖️ Regras Gerais
-A API deve ser pública, mas conter autenticação e autorização.
-Evite duplicidade de dados.
-Estruture bem o código, seguindo boas práticas REST.
-Pense em performance e escalabilidade(nesta abordagem optei por um design orientado a replicar os dados de Produto ).
-Documente sua API (Swagger padrao do FASTAPI).
-Não use IA ou cópias. Será passível de eliminação.
-
-## 💡 Requisitos Técnicos
+### 💡 Requisitos Técnicos Escolhidos
 Você pode escolher uma das seguintes linguagens:
-* Python
-* Framework FASTAPI  
+    * Python
+    * Framework FASTAPI  
 
-## 🗄️ Banco de Dados sugerido:
-PostgreSQL
+### 🗄️ Banco de Dados sugerido:
+    * PostgreSQL
 
-## 🛠️ Ferramentas Sugerida execução do projeto localmente
+### 🛠️ Ferramentas Sugerida execução do projeto localmente
+    * Docker
+    * Docker Compose
 
-    - Docker
-    - Docker Compose
-
-[Guia de Execução do Ambiente Local (Desenvolvimento)](INSTALL.md)
+## [Guia de Execução do Ambiente Local (Desenvolvimento)](INSTALL.md)
 
 **Após a inicialização, a aplicação estará disponível no endereço:**
 
 - [ReDoc](http://localhost:8000/redoc) para documentação da API
-
 - [Swagger UI](http://localhost:8000/docs) para documentação da API
 
-
-## Teste Web
+### API via Web (localhost:8000/docs)
 Para testar a API, você pode usar ferramentas como Postman ou Insomnia, ou até mesmo o Swagger UI integrado na aplicação.
 
 Realize o procedimento para criacao de ADMIN executando o seguinte comando:
-
 ```bash
-docker exec rest_api python src/scripts/seed.py
+docker exec be_aqifome_restfull-api-1 python api/scripts/seed.py   
 ```
 
 Resultando na criação de um cliente padrão e popular o banco de dados:
-**EMAIL=** edson@aiqfome.com
-**PASSWORD=** aiQfome123
+    ** EMAIL=edson@aiqfome.com
+    ** PASSWORD=aiQfome123
 
-Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.local](.env.container).
-
+Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.container](.env.container).
 
 ![Auhtenticação](arquitetura_docs/img/auth_admin_seed.png)
 
 
-## 📝 Documentação
+### 📝 Documentação
 A documentação da API está disponível no Swagger UI e ReDoc, acessíveis após a inicialização do ambiente local.
 
-## 📦 Estrutura do Projeto
-## 📦 Estrutura do Projeto
+
+### 📦 Estrutura do Projeto
 
 A estrutura do projeto foi cuidadosamente planejada para garantir organização, escalabilidade e facilidade de manutenção, seguindo padrões recomendados para aplicações FASTAPI. Os principais diretórios e arquivos estão descritos abaixo:
 
@@ -124,7 +119,8 @@ BE_AqiFome_RESTfull/
 ├── docker-compose.yml     # Orquestração de containers
 ├── INSTALL.md             # Guia de instalação e execução local
 ├── .env.container         # Variáveis de ambiente para o container
-└── README.md              # Documentação principal do projeto
+├── README.md              # Documentação principal do projeto
+└── DESAFIO.md              # Desafio proposto
 ```
 
 **Principais pontos:**
@@ -135,4 +131,3 @@ BE_AqiFome_RESTfull/
 - **Docker e Compose**: Permitem fácil deploy e replicação do ambiente de desenvolvimento.
 
 Essa organização facilita a colaboração, a escalabilidade e a manutenção do projeto ao longo do tempo.
-
