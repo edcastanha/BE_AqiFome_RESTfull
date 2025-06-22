@@ -2,12 +2,9 @@ fastapi
 uvicorn
 sqlalchemy
 psycopg2-binary
-pydantic
-pydantic-settings
-pytest
 python-dotenv
-python-jose[cryptography]
 passlib[bcrypt]
-pytest-asyncio
+python-jose[cryptography]
+pydantic-settings
+python-multipart
 httpx
-requests

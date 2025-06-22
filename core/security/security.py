@@ -3,6 +3,12 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from core.config.settings import get_settings
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
+
+from core.repository.cliente_repository import ClienteRepository
+from core.config.db import SessionLocal
 
 settings = get_settings()
 
@@ -32,3 +38,38 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        )
+        email = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = email
+    except JWTError:
+        raise credentials_exception
+    user = ClienteRepository(db).get_by_email(email=token_data)
+    if user is None:
+        raise credentials_exception
+    return user

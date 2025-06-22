@@ -1,5 +1,6 @@
-from core.domain.cliente import Cliente
+from core.domain.cliente import Cliente, ClienteCreate
 from core.repository.cliente_repository import ClienteRepository
+from core.security.security import get_password_hash
 
 class ClienteService:
     """
@@ -16,20 +17,26 @@ class ClienteService:
         """
         self.repository = repository
 
-    def criar_cliente(self, cliente: Cliente) -> Cliente:
+    def criar_cliente(self, cliente_data: ClienteCreate) -> Cliente:
         """
-        Cria um novo cliente após validação de unicidade do e-mail.
+        Cria um novo cliente após validação de unicidade do e-mail e hashing da senha.
 
         Args:
-            cliente (Cliente): Dados do cliente a ser criado.
+            cliente_data (ClienteCreate): Dados do cliente a ser criado.
         Returns:
             Cliente: Cliente criado.
         Raises:
             ValueError: Se o e-mail já estiver cadastrado.
         """
-        if self.repository.get_by_email(cliente.email):
+        if self.repository.get_by_email(cliente_data.email):
             raise ValueError("E-mail já cadastrado")
-        return self.repository.create(cliente)
+
+        hashed_password = get_password_hash(cliente_data.senha)
+        cliente_com_senha_hash = cliente_data.model_copy(
+            update={"senha": hashed_password}
+        )
+
+        return self.repository.create(cliente_com_senha_hash)
 
     def listar_clientes(self):
         """
