@@ -1,13 +1,21 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
+from enum import IntEnum
+
+class TipoCliente(IntEnum):
+    NORMAL = 0
+    ADMIN = 1
+
 
 class ClienteBase(BaseModel):
     email: str
+    senha: str
+    tipo: TipoCliente = TipoCliente.NORMAL  # 1 = Admin
 
 
 class ClienteCreate(ClienteBase):
     nome: str
-    senha: str
+    
 
 
 class Cliente(ClienteBase):
@@ -20,7 +28,9 @@ class Cliente(ClienteBase):
             "example": {
                 "id": 1,
                 "nome": "Edson Bezerra",
-                "email": "edson@email.com",
+                "email": "edson@aiqfome.com",
+                "senha": "senha-secreta",
+                "tipo": 0, 
             }
         },
     )
