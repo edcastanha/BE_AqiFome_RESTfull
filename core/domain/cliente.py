@@ -32,6 +32,7 @@ class Cliente(ClienteBase):
                 "tipo": 0,
             }
         },
+        },
     )
 
 

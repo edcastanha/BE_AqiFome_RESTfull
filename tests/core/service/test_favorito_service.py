@@ -2,6 +2,10 @@ from unittest.mock import MagicMock, AsyncMock, call
 import pytest
 from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
 from core.domain.produto import Produto
+from unittest.mock import MagicMock, AsyncMock, call
+import pytest
+from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
+from core.domain.produto import Produto
 from core.service.favorito_service import FavoritoService
 from pydantic import HttpUrl, parse_obj_as
 

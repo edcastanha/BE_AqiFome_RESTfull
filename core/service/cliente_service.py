@@ -1,8 +1,14 @@
 from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
 from core.repository.cliente_repository import ClienteRepository
 from core.security.security import get_password_hash
+from core.security.security import get_password_hash
 
 class ClienteService:
+    """
+    Serviço de regras de negócio para clientes.
+
+    Responsável por validações e operações de alto nível envolvendo clientes.
+    """
     """
     Serviço de regras de negócio para clientes.
 
@@ -15,8 +21,26 @@ class ClienteService:
         Args:
             repository (ClienteRepository): Instância do repositório de clientes.
         """
+        """
+        Inicializa o serviço de clientes.
+
+        Args:
+            repository (ClienteRepository): Instância do repositório de clientes.
+        """
         self.repository = repository
 
+    def criar_cliente(self, cliente_data: ClienteCreate) -> Cliente:
+        """
+        Cria um novo cliente após validação de unicidade do e-mail e hashing da senha.
+
+        Args:
+            cliente_data (ClienteCreate): Dados do cliente a ser criado.
+        Returns:
+            Cliente: Cliente criado.
+        Raises:
+            ValueError: Se o e-mail já estiver cadastrado.
+        """
+        if self.repository.get_by_email(cliente_data.email):
     def criar_cliente(self, cliente_data: ClienteCreate) -> Cliente:
         """
         Cria um novo cliente após validação de unicidade do e-mail e hashing da senha.
@@ -45,9 +69,23 @@ class ClienteService:
         Returns:
             list[Cliente]: Lista de clientes.
         """
+        """
+        Lista todos os clientes cadastrados.
+
+        Returns:
+            list[Cliente]: Lista de clientes.
+        """
         return self.repository.list()
 
     def buscar_cliente(self, cliente_id: int):
+        """
+        Busca um cliente pelo ID.
+
+        Args:
+            cliente_id (int): ID do cliente.
+        Returns:
+            Cliente ou None: Cliente encontrado ou None.
+        """
         """
         Busca um cliente pelo ID.
 
@@ -71,6 +109,14 @@ class ClienteService:
         return self.repository.update(cliente_id, cliente_update)
 
     def deletar_cliente(self, cliente_id: int):
+        """
+        Remove um cliente do banco de dados.
+
+        Args:
+            cliente_id (int): ID do cliente a ser removido.
+        Returns:
+            bool: True se removido, False caso contrário.
+        """
         """
         Remove um cliente do banco de dados.
 

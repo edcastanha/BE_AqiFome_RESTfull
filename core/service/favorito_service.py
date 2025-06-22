@@ -1,6 +1,9 @@
 from typing import List
 from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
 from core.domain.produto import Produto
+from typing import List
+from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
+from core.domain.produto import Produto
 from core.repository.favorito_repository import FavoritoRepository
 from core.repository.produto_repository import ProdutoRepository
 from core.externos.fake_store_product import FakeStoreProduct
@@ -94,6 +97,15 @@ class FavoritoService:
         return response
 
     def remover_favorito(self, cliente_id: int, produto_id: int) -> bool:
+        """
+        Remove um favorito do cliente.
+
+        Args:
+            cliente_id (int): ID do cliente.
+            produto_id (int): ID do produto favorito.
+        Returns:
+            bool: True se removido, False caso contrário.
+        """
         """
         Remove um favorito do cliente.
 

@@ -1,10 +1,24 @@
 from core.domain.cliente import Cliente, ClienteCreate, ClienteInDB
+from core.domain.cliente import Cliente, ClienteCreate, ClienteInDB
 from core.config.db import SessionLocal
 from core.repository.cliente_orm import ClienteORM
 from sqlalchemy.orm import Session
 from typing import Optional, List
 
 class ClienteRepository:
+    """
+    Repositório para operações CRUD da entidade Cliente.
+
+    Permite criar, buscar, listar, atualizar e deletar clientes no banco de dados.
+    Pode receber uma sessão do SQLAlchemy para facilitar testes e integração.
+    """
+    def __init__(self, db: Optional[Session] = None):
+        """
+        Inicializa uma instância do repositório de clientes.
+
+        Args:
+            db (Optional[Session]): Sessão do banco de dados SQLAlchemy. Se não fornecida, será criada uma nova sessão.
+        """
     """
     Repositório para operações CRUD da entidade Cliente.
 
@@ -45,9 +59,26 @@ class ClienteRepository:
         Returns:
             Optional[Cliente]: Cliente encontrado ou None.
         """
+        """
+        Busca um cliente pelo ID.
+
+        Args:
+            cliente_id (int): ID do cliente.
+        Returns:
+            Optional[Cliente]: Cliente encontrado ou None.
+        """
         db_cliente = self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
         return Cliente.model_validate(db_cliente) if db_cliente else None
 
+    def get_by_email(self, email: str) -> Optional[ClienteInDB]:
+        """
+        Busca um cliente pelo e-mail, retornando o modelo com a senha.
+
+        Args:
+            email (str): E-mail do cliente.
+        Returns:
+            Optional[ClienteInDB]: Cliente encontrado ou None.
+        """
     def get_by_email(self, email: str) -> Optional[ClienteInDB]:
         """
         Busca um cliente pelo e-mail, retornando o modelo com a senha.

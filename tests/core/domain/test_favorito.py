@@ -28,6 +28,36 @@ def test_favorito_base_model():
 def test_favorito_create_model():
     """Testa o DTO interno de criação de Favorito."""
     favorito = FavoritoCreate(cliente_id=1, produto_id=3)
+import pytest
+from pydantic import ValidationError
+
+from core.domain.favorito import (
+    Favorito,
+    FavoritoBase,
+    FavoritoCreate,
+    FavoritoCreateRequest,
+    FavoritoResponse,
+)
+from core.domain.produto import Produto
+
+
+def test_favorito_create_request():
+    """Testa a criação de uma requisição para adicionar favoritos."""
+    request_data = {"produto_ids": [1, 5, 10]}
+    request_model = FavoritoCreateRequest(**request_data)
+    assert request_model.produto_ids == [1, 5, 10]
+
+
+def test_favorito_base_model():
+    """Testa o modelo base de Favorito."""
+    favorito = FavoritoBase(cliente_id=1, produto_id=2)
+    assert favorito.cliente_id == 1
+    assert favorito.produto_id == 2
+
+
+def test_favorito_create_model():
+    """Testa o DTO interno de criação de Favorito."""
+    favorito = FavoritoCreate(cliente_id=1, produto_id=3)
     assert favorito.cliente_id == 1
     assert favorito.produto_id == 3
 

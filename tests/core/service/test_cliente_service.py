@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 import pytest
 from core.domain.cliente import ClienteCreate, TipoCliente
 from core.service.cliente_service import ClienteService
