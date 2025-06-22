@@ -8,3 +8,6 @@ python-jose[cryptography]
 pydantic-settings
 python-multipart
 httpx
+pytest-asyncio
+pytest-cov
+email-validator

@@ -23,7 +23,7 @@ def seed_database():
     try:
         admin_email = os.getenv("SEED_ADMIN_EMAIL")
         admin_password = os.getenv("SEED_ADMIN_PASSWORD")
-        admin_name = os.getenv("SEED_ADMIN_NAME", "Admin User") # Nome padrão "Admin User"
+        admin_name = os.getenv("SEED_ADMIN_NAME", "ADMIN") # Nome padrão "Admin User"
 
         if not admin_email or not admin_password:
             print("ERRO: As variáveis de ambiente SEED_ADMIN_EMAIL e SEED_ADMIN_PASSWORD devem ser definidas no arquivo .env")

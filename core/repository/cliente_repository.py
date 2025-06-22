@@ -26,7 +26,10 @@ class ClienteRepository:
         A senha já deve vir com hash do serviço.
         """
         db_cliente = ClienteORM(
-            nome=cliente.nome, email=cliente.email, senha=cliente.senha
+            nome=cliente.nome,
+            email=cliente.email,
+            senha=cliente.senha,
+            tipo=cliente.tipo,
         )
         self.db.add(db_cliente)
         self.db.commit()
@@ -66,7 +69,7 @@ class ClienteRepository:
         """
         return [Cliente.from_orm(c) for c in self.db.query(ClienteORM).all()]
 
-    def update(self, cliente_id: int, cliente: Cliente) -> Optional[Cliente]:
+    def update(self, cliente_id: int, cliente_update: Cliente) -> Cliente | None:
         """
         Atualiza os dados de um cliente existente.
 
@@ -76,14 +79,16 @@ class ClienteRepository:
         Returns:
             Optional[Cliente]: Cliente atualizado ou None se não encontrado.
         """
-        db_cliente = self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
-        if not db_cliente:
-            return None
-        db_cliente.nome = cliente.nome
-        db_cliente.email = cliente.email
-        self.db.commit()
-        self.db.refresh(db_cliente)
-        return Cliente.from_orm(db_cliente)
+        cliente_orm = self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
+        if cliente_orm:
+            update_data = cliente_update.model_dump(exclude_unset=True)
+            for key, value in update_data.items():
+                setattr(cliente_orm, key, value)
+
+            self.db.commit()
+            self.db.refresh(cliente_orm)
+            return Cliente.model_validate(cliente_orm)
+        return None
 
     def delete(self, cliente_id: int) -> bool:
         """
@@ -94,7 +99,9 @@ class ClienteRepository:
         Returns:
             bool: True se removido, False se não encontrado.
         """
-        db_cliente = self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
+        db_cliente = (
+            self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
+        )
         if not db_cliente:
             return False
         self.db.delete(db_cliente)

@@ -3,6 +3,7 @@ import pytest
 from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate
 from core.domain.produto import Produto
 from core.service.favorito_service import FavoritoService
+from pydantic import HttpUrl, parse_obj_as
 
 pytestmark = pytest.mark.asyncio
 
@@ -25,17 +26,17 @@ async def test_adicionar_favoritos_com_sucesso(mock_dependencies):
     # Produto 1 (cache hit), Produto 2 (cache miss), Produto 3 (já favorito)
     mock_repo.exists.side_effect = [False, False, True] # P1, P2, P3
     mock_produto_repo.get_by_id.side_effect = [
-        Produto(id=1, titulo="P1 Cache", preco=10, imagem="img1"), # P1
+        Produto(id=1, titulo="P1 Cache", preco=10, imagem="http://img1.com/img01.png"), # P1
         None, # P2 (não está no cache)
     ]
     mock_client.get_product.return_value = {
-        "id": 2, "title": "P2 API", "price": 20, "image": "img2",
+        "id": 2, "title": "P2 API", "price": 20, "image": "http://img2.com/img02.png",
         "description": "D", "category": "C", "rating": {"rate": 4}
     }
     # O serviço vai chamar listar_favoritos no final
     service.listar_favoritos = MagicMock(return_value=[
-        FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem="img1")),
-        FavoritoResponse(id=2, cliente_id=1, produto=Produto(id=2, titulo="P2", preco=20, imagem="img2")),
+        FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem=HttpUrl('http://img1.com/img01.png', scheme='http', host='img1.com', tld='com', host_type='domain'))),
+        FavoritoResponse(id=2, cliente_id=1, produto=Produto(id=2, titulo="P2", preco=20, imagem="http://img2.com/img02.png")),
     ])
 
     # --- Execução ---
@@ -95,7 +96,7 @@ async def test_adicionar_favoritos_sem_novos_favoritos(mock_dependencies):
     # --- Configuração dos Mocks ---
     mock_repo.exists.return_value = True # Todos os produtos já são favoritos
     service.listar_favoritos = MagicMock(return_value=[
-        FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem="img1"))
+        FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem=parse_obj_as(HttpUrl, "http://img1.com/img01.png")))
     ])
 
     # --- Execução --- 
@@ -121,7 +122,7 @@ async def test_remover_favorito_com_sucesso(mock_dependencies):
     resultado = service.remover_favorito(cliente_id=1, produto_id=1)
 
     # Verificação
-    mock_repo.delete.assert_called_once_with(cliente_id=1, produto_id=1)
+    mock_repo.delete.assert_called_once_with(1, 1)
     assert resultado is True
 
 
@@ -137,5 +138,5 @@ async def test_remover_favorito_nao_encontrado(mock_dependencies):
     resultado = service.remover_favorito(cliente_id=1, produto_id=999)
 
     # Verificação
-    mock_repo.delete.assert_called_once_with(cliente_id=1, produto_id=999)
+    mock_repo.delete.assert_called_once_with(1, 999)
     assert resultado is False

@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 import pytest
-from core.domain.cliente import ClienteCreate
+from core.domain.cliente import ClienteCreate, TipoCliente
 from core.service.cliente_service import ClienteService
 
 
@@ -14,7 +14,7 @@ def test_criar_cliente(mock_get_password_hash):
     mock_repo = MagicMock()
     mock_get_password_hash.return_value = "senha_hasheada_super_segura"
     service = ClienteService(mock_repo)
-    cliente_data = ClienteCreate(nome="Teste", email="teste@exemplo.com", password="senha123")
+    cliente_data = ClienteCreate(nome="Teste", email="teste@exemplo.com", senha="senha123", tipo=TipoCliente.USER)
 
     # Ação
     service.criar_cliente(cliente_data)
@@ -35,7 +35,7 @@ def test_criar_cliente_com_email_existente():
     mock_repo = MagicMock()
     mock_repo.get_by_email.return_value = True  # Simula que o e-mail já existe
     service = ClienteService(mock_repo)
-    cliente_data = ClienteCreate(nome="Teste", email="existente@exemplo.com", password="senha123")
+    cliente_data = ClienteCreate(nome="Teste", email="existente@exemplo.com", senha="senha123", tipo=TipoCliente.USER)
 
     with pytest.raises(ValueError, match="E-mail já cadastrado"):
         service.criar_cliente(cliente_data)

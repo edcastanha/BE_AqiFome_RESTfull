@@ -34,7 +34,9 @@ def test_favorito_create_model():
 
 def test_favorito_domain_model():
     """Testa o modelo de domínio Favorito, que pode conter um objeto Produto."""
-    produto = Produto(id=1, titulo="Teste", preco=10.0, imagem="img.jpg")
+    produto = Produto(
+        id=1, titulo="Teste", preco=10.0, imagem="https://example.com/image.jpg"
+    )
     favorito = Favorito(id=10, cliente_id=1, produto_id=1, produto=produto)
     assert favorito.id == 10
     assert favorito.produto is not None
@@ -43,7 +45,9 @@ def test_favorito_domain_model():
 
 def test_favorito_response_model():
     """Testa o modelo de resposta da API para um favorito."""
-    produto = Produto(id=1, titulo="Teste", preco=10.0, imagem="img.jpg")
+    produto = Produto(
+        id=1, titulo="Teste", preco=10.0, imagem="https://example.com/image.jpg"
+    )
     response = FavoritoResponse(id=20, cliente_id=1, produto=produto)
     assert response.id == 20
     assert response.cliente_id == 1
