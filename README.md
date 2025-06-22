@@ -7,8 +7,15 @@ Requisitos de execucão do projeto localmente
 
 [Guia de Execução do Ambiente Local (Desenvolvimento)](INSTALL.md)
 
+**Após a inicialização, a aplicação estará disponível no endereço:**
+
+   - [ReDoc](http://localhost:8000/redoc) para documentação da API
+
+   - [Swagger UI](http://localhost:8000/docs) para documentação da API
+
 ========================
 ## Contexto
+
 O aiqfome está expandindo seus canais de integração e precisa de uma API robusta para gerenciar os "produtos favoritos" de usuários na plataforma.
 Essa funcionalidade será usada por apps e interfaces web para armazenar e consultar produtos marcados como favoritos pelos clientes. A API terá alto volume de uso e integrará com outros sistemas internos e externos.
 

@@ -35,12 +35,6 @@ Este projeto utiliza Docker e Docker Compose para facilitar a configuração e e
 
    Isso irá criar um cliente padrão e popular o banco de dados com alguns produtos favoritos.
 
-   Após a inicialização, a aplicação estará disponível no endereço:
-
-   - http://localhost:8000/redoc (ReDoc para documentação da API)
-
-   - http://localhost:8000/docs (Swagger UI para documentação da API)
-
    (Verifique a porta configurada no `docker-compose.yml` ou no `Dockerfile` caso seja diferente)
 
 4. **Parar os containers:**
