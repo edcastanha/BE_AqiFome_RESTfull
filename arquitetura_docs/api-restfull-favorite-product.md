@@ -1,10 +1,10 @@
-# Documento de requisitos do Projeto API Restful de Favoritos de Produtos dwe Cliente
+# Documento de requisitos do Projeto API Restful de Favoritos de Produtos do Cliente
 
-## Requisitos do Projeto
+Usarei Python com FastAPI para desenvolver uma API RESTful que permita aos clientes gerenciar seus produtos favoritos. A seguir estão os requisitos e especificações do projeto. 
 
 #### 1. Cadastro e Gerenciamento de Clientes
 - Permitir criar, visualizar, editar e remover clientes.
-- Cada cliente deve possuir nome e e-mail obrigatórios.
+- Cada cliente deve possuir name, e-mail e password obrigatórios.
 - Não permitir cadastro de e-mails duplicados.
 
 #### 2. Gerenciamento de Produtos Favoritos
@@ -38,14 +38,5 @@
 #### 8. Banco de Dados
 - Utilizaremos preferencialmente PostgreSQL
 
-#### 9. Boas Práticas de Código
-- Seguir padrões RESTful.
-- Organizar o código de forma clara e modular.
-- Evitar uso de IA ou cópias de código de terceiros.
 
-#### 10. Critérios de Avaliação
-- Correção e funcionamento da API.
-- Modelagem adequada dos dados.
-- Validação e controle de dados.
-- Documentação e instrução de uso.
-- Segurança básica implementada.
+
