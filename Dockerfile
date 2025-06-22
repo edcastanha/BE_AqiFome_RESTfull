@@ -2,16 +2,16 @@
 FROM python:3.12-slim
 
 # Define o diretório de trabalho dentro do container
-WORKDIR /api
+WORKDIR /src
 
 # Copia os arquivos de dependências para o container
-COPY ./src/requirements.txt ./
+COPY ./requirements.txt ./
 
 # Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o restante do código para o container
-COPY ./src ./src
+COPY ./api ./api
 
 COPY ./core ./core
 
@@ -21,7 +21,7 @@ COPY ./tests ./tests
 EXPOSE 8000
 
 # Define a variável de ambiente PYTHONPATH
-ENV PYTHONPATH=/api
+ENV PYTHONPATH=/src
 
 # Comando para iniciar o servidor FastAPI
-CMD ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
