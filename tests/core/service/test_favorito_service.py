@@ -26,7 +26,7 @@ async def test_adicionar_favoritos_com_sucesso(mock_dependencies):
     # Produto 1 (cache hit), Produto 2 (cache miss), Produto 3 (já favorito)
     mock_repo.exists.side_effect = [False, False, True] # P1, P2, P3
     mock_produto_repo.get_by_id.side_effect = [
-        Produto(id=1, titulo="P1 Cache", preco=10, imagem="http://img1.com/img01.png"), # P1
+        Produto(id=1, titulo="P1 Cache", preco=10, imagem=parse_obj_as(HttpUrl, "http://img1.com/img01.png")), # P1
         None, # P2 (não está no cache)
     ]
     mock_client.get_product.return_value = {
@@ -35,8 +35,8 @@ async def test_adicionar_favoritos_com_sucesso(mock_dependencies):
     }
     # O serviço vai chamar listar_favoritos no final
     service.listar_favoritos = MagicMock(return_value=[
-        FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem=HttpUrl('http://img1.com/img01.png', scheme='http', host='img1.com', tld='com', host_type='domain'))),
-        FavoritoResponse(id=2, cliente_id=1, produto=Produto(id=2, titulo="P2", preco=20, imagem="http://img2.com/img02.png")),
+        FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem=parse_obj_as(HttpUrl, "http://img1.com/img01.png"))),
+        FavoritoResponse(id=2, cliente_id=1, produto=Produto(id=2, titulo="P2", preco=20, imagem=parse_obj_as(HttpUrl, "http://img2.com/img02.png"))),
     ])
 
     # --- Execução ---

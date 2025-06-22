@@ -5,404 +5,46 @@ plugins: anyio-4.9.0, cov-6.2.1, asyncio-1.0.0
 asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
 collected 34 items
 
-tests/core/domain/test_cliente.py F.F...F                                [ 20%]
+tests/core/domain/test_cliente.py .......                                [ 20%]
 tests/core/domain/test_favorito.py ......                                [ 38%]
-tests/core/repository/test_cliente_repository.py ....FF..                [ 61%]
-tests/core/repository/test_favorito_repository.py FF....                 [ 79%]
-tests/core/service/test_cliente_service.py FF                            [ 85%]
-tests/core/service/test_favorito_service.py ..FFF                        [100%]
+tests/core/repository/test_cliente_repository.py ........                [ 61%]
+tests/core/repository/test_favorito_repository.py ......                 [ 79%]
+tests/core/service/test_cliente_service.py ..                            [ 85%]
+tests/core/service/test_favorito_service.py .....                        [100%]
 
-=================================== FAILURES ===================================
-_____________________ test_cliente_creation_with_defaults ______________________
-
-    def test_cliente_creation_with_defaults():
-        """Testa a criação de um Cliente com o tipo padrão."""
->       cliente = ClienteBase(email="test@example.com", senha="password")
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 1 validation error for ClienteBase
-E       tipo
-E         Field required [type=missing, input_value={'email': 'test@example.com', 'senha': 'password'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-
-tests/core/domain/test_cliente.py:15: ValidationError
-__________________________ test_cliente_create_model ___________________________
-
-    def test_cliente_create_model():
-        """Testa o modelo ClienteCreate."""
-        cliente_data = {
-            "nome": "Ed Lourenco",
-            "email": "ed.ourenco@example.com",
-            "senha": "a_safe_password",
-        }
->       cliente = ClienteCreate(**cliente_data)
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 1 validation error for ClienteCreate
-E       tipo
-E         Field required [type=missing, input_value={'nome': 'Ed Lourenco', '...nha': 'a_safe_password'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-
-tests/core/domain/test_cliente.py:34: ValidationError
-________________________ test_cliente_model_valid_email ________________________
-
-    def test_cliente_model_valid_email():
-        """Testa que o Pydantic aceita um e-mail válido."""
-        try:
->           ClienteCreate(
-                nome="Valid User",
-                email="valid.user@example.com",
-                senha="password",
-            )
-E           pydantic_core._pydantic_core.ValidationError: 1 validation error for ClienteCreate
-E           tipo
-E             Field required [type=missing, input_value={'nome': 'Valid User', 'e...m', 'senha': 'password'}, input_type=dict]
-E               For further information visit https://errors.pydantic.dev/2.11/v/missing
-
-tests/core/domain/test_cliente.py:87: ValidationError
-
-During handling of the above exception, another exception occurred:
-
-    def test_cliente_model_valid_email():
-        """Testa que o Pydantic aceita um e-mail válido."""
-        try:
-            ClienteCreate(
-                nome="Valid User",
-                email="valid.user@example.com",
-                senha="password",
-            )
-        except ValidationError:
->           pytest.fail("A validação de e-mail válido falhou inesperadamente.")
-E           Failed: A validação de e-mail válido falhou inesperadamente.
-
-tests/core/domain/test_cliente.py:93: Failed
-__________________________ test_update_cliente_found ___________________________
-
-repo = <core.repository.cliente_repository.ClienteRepository object at 0x7f9918c23a40>
-mock_db = <MagicMock spec='Session' id='140295522099968'>
-
-    def test_update_cliente_found(repo, mock_db):
-        cliente_orm = ClienteORM(
-            id=3,
-            nome="Antigo",
-            email="antigo@email.com",
-            tipo=TipoCliente.USER,
-            senha="antiga_senha",
-        )
-        mock_db.query.return_value.filter.return_value.first.return_value = cliente_orm
-        cliente_update_data = Cliente(
-            id=3,
-            nome="Novo Nome",
-            email="novo@email.com",
-            senha="nova_senha",
-            tipo=TipoCliente.ADMIN,
-        )
-    
-        updated_cliente = repo.update(3, cliente_update_data)
-    
-        assert updated_cliente is not None
-        assert updated_cliente.nome == "Novo Nome"
->       assert updated_cliente.tipo == TipoCliente.ADMIN
-E       AssertionError: assert <TipoCliente.USER: 0> == <TipoCliente.ADMIN: 1>
-E        +  where <TipoCliente.USER: 0> = Cliente(email='novo@email.com', senha='antiga_senha', tipo=<TipoCliente.USER: 0>, id=3, nome='Novo Nome').tipo
-E        +  and   <TipoCliente.ADMIN: 1> = TipoCliente.ADMIN
-
-tests/core/repository/test_cliente_repository.py:106: AssertionError
-________________________ test_update_cliente_not_found _________________________
-
-repo = <core.repository.cliente_repository.ClienteRepository object at 0x7f9918ceee40>
-mock_db = <MagicMock spec='Session' id='140295522938624'>
-
-    def test_update_cliente_not_found(repo, mock_db):
-        mock_db.query.return_value.filter.return_value.first.return_value = None
->       cliente_update_data = Cliente(
-            id=4, nome="Nao Existe", email="nao@existe.com", senha="password"
-        )
-E       pydantic_core._pydantic_core.ValidationError: 1 validation error for Cliente
-E       tipo
-E         Field required [type=missing, input_value={'id': 4, 'nome': 'Nao Ex...m', 'senha': 'password'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-
-tests/core/repository/test_cliente_repository.py:112: ValidationError
-_______________________________ test_create_many _______________________________
-
-repository = <core.repository.favorito_repository.FavoritoRepository object at 0x7f9918b35b20>
-mock_db = <MagicMock spec='Session' id='140295521131488'>
-
-    def test_create_many(repository, mock_db):
-        """Testa a criação de múltiplos favoritos em lote."""
-        favoritos_data = [
-            FavoritoCreate(cliente_id=1, produto_id=10),
-            FavoritoCreate(cliente_id=1, produto_id=20),
-        ]
-    
->       repository.create_many(favoritos_data)
-
-tests/core/repository/test_favorito_repository.py:28: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <core.repository.favorito_repository.FavoritoRepository object at 0x7f9918b35b20>
-favoritos = [FavoritoCreate(cliente_id=1, produto_id=10), FavoritoCreate(cliente_id=1, produto_id=20)]
-
-    def create_many(self, favoritos: List[FavoritoCreate]) -> List[Favorito]:
-        """
-        Cria múltiplos favoritos para um cliente em uma única transação.
-    
-        Args:
-            favoritos (List[FavoritoCreate]): Lista de dados dos favoritos a serem criados.
-        Returns:
-            List[Favorito]: Lista de favoritos criados com IDs atribuídos.
-        """
-        db_favoritos = [FavoritoORM(cliente_id=f.cliente_id, produto_id=f.produto_id) for f in favoritos]
-        self.db.add_all(db_favoritos)
-        self.db.commit()
-        for db_fav in db_favoritos:
-            self.db.refresh(db_fav)
->       return [Favorito.model_validate(fav) for fav in db_favoritos]
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 1 validation error for Favorito
-E       id
-E         Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
-E           For further information visit https://errors.pydantic.dev/2.11/v/int_type
-
-core/repository/favorito_repository.py:35: ValidationError
-_____________________________ test_list_by_cliente _____________________________
-
-repository = <core.repository.favorito_repository.FavoritoRepository object at 0x7f9918b4c170>
-mock_db = <MagicMock spec='Session' id='140295521222976'>
-
-    def test_list_by_cliente(repository, mock_db):
-        """Testa a listagem de favoritos por cliente."""
-        mock_favoritos_orm = [FavoritoORM(), FavoritoORM()]
-        mock_db.query.return_value.filter.return_value.all.return_value = mock_favoritos_orm
-    
->       result = repository.list_by_cliente(cliente_id=1)
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/core/repository/test_favorito_repository.py:39: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <core.repository.favorito_repository.FavoritoRepository object at 0x7f9918b4c170>
-cliente_id = 1
-
-    def list_by_cliente(self, cliente_id: int) -> List[Favorito]:
-        """
-        Lista todos os favoritos de um cliente.
-    
-        Args:
-            cliente_id (int): ID do cliente.
-        Returns:
-            List[Favorito]: Lista de favoritos do cliente.
-        """
->       return [Favorito.model_validate(f) for f in self.db.query(FavoritoORM).filter(FavoritoORM.cliente_id == cliente_id).all()]
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 3 validation errors for Favorito
-E       cliente_id
-E         Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
-E           For further information visit https://errors.pydantic.dev/2.11/v/int_type
-E       produto_id
-E         Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
-E           For further information visit https://errors.pydantic.dev/2.11/v/int_type
-E       id
-E         Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
-E           For further information visit https://errors.pydantic.dev/2.11/v/int_type
-
-core/repository/favorito_repository.py:46: ValidationError
-______________________________ test_criar_cliente ______________________________
-
-mock_get_password_hash = <MagicMock name='get_password_hash' id='140295521445424'>
-
-    @patch('core.security.security.get_password_hash')
-    def test_criar_cliente(mock_get_password_hash):
-        """
-        Testa a criação de um cliente, verificando o hashing da senha
-        e a chamada ao repositório.
-        """
-        # Configuração
-        mock_repo = MagicMock()
-        mock_get_password_hash.return_value = "senha_hasheada_super_segura"
-        service = ClienteService(mock_repo)
->       cliente_data = ClienteCreate(nome="Teste", email="teste@exemplo.com", password="senha123")
-                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for ClienteCreate
-E       senha
-E         Field required [type=missing, input_value={'nome': 'Teste', 'email'... 'password': 'senha123'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-E       tipo
-E         Field required [type=missing, input_value={'nome': 'Teste', 'email'... 'password': 'senha123'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-
-tests/core/service/test_cliente_service.py:17: ValidationError
-____________________ test_criar_cliente_com_email_existente ____________________
-
-    def test_criar_cliente_com_email_existente():
-        """Testa a falha ao tentar criar um cliente com e-mail que já existe."""
-        mock_repo = MagicMock()
-        mock_repo.get_by_email.return_value = True  # Simula que o e-mail já existe
-        service = ClienteService(mock_repo)
->       cliente_data = ClienteCreate(nome="Teste", email="existente@exemplo.com", password="senha123")
-                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for ClienteCreate
-E       senha
-E         Field required [type=missing, input_value={'nome': 'Teste', 'email'... 'password': 'senha123'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-E       tipo
-E         Field required [type=missing, input_value={'nome': 'Teste', 'email'... 'password': 'senha123'}, input_type=dict]
-E           For further information visit https://errors.pydantic.dev/2.11/v/missing
-
-tests/core/service/test_cliente_service.py:38: ValidationError
-_________________ test_adicionar_favoritos_sem_novos_favoritos _________________
-
-mock_dependencies = (<MagicMock id='140295521530896'>, <MagicMock id='140295521326944'>, <AsyncMock id='140295521323344'>)
-
-    async def test_adicionar_favoritos_sem_novos_favoritos(mock_dependencies):
-        """Testa o fluxo onde nenhum novo favorito é adicionado (todos já existem)."""
-        mock_repo, mock_produto_repo, mock_client = mock_dependencies
-        service = FavoritoService(mock_repo, mock_produto_repo, mock_client)
-    
-        # --- Configuração dos Mocks ---
-        mock_repo.exists.return_value = True # Todos os produtos já são favoritos
-        service.listar_favoritos = MagicMock(return_value=[
->           FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem="img1"))
-                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        ])
-E       pydantic_core._pydantic_core.ValidationError: 1 validation error for Produto
-E       imagem
-E         Input should be a valid URL, relative URL without a base [type=url_parsing, input_value='img1', input_type=str]
-E           For further information visit https://errors.pydantic.dev/2.11/v/url_parsing
-
-tests/core/service/test_favorito_service.py:98: ValidationError
-______________________ test_remover_favorito_com_sucesso _______________________
-
-mock_dependencies = (<MagicMock id='140295521228064'>, <MagicMock id='140295521223024'>, <AsyncMock id='140295521179584'>)
-
-    async def test_remover_favorito_com_sucesso(mock_dependencies):
-        """Testa a remoção de um favorito com sucesso."""
-        mock_repo, mock_produto_repo, mock_client = mock_dependencies
-        service = FavoritoService(mock_repo, mock_produto_repo, mock_client)
-    
-        # Configuração
-        mock_repo.delete.return_value = True
-    
-        # Execução
-        resultado = service.remover_favorito(cliente_id=1, produto_id=1)
-    
-        # Verificação
->       mock_repo.delete.assert_called_once_with(cliente_id=1, produto_id=1)
-
-tests/core/service/test_favorito_service.py:124: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-/usr/lib/python3.12/unittest/mock.py:956: in assert_called_once_with
-    return self.assert_called_with(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <MagicMock name='mock.delete' id='140295521175168'>, args = ()
-kwargs = {'cliente_id': 1, 'produto_id': 1}
-expected = call(cliente_id=1, produto_id=1), actual = call(1, 1)
-_error_message = <function NonCallableMock.assert_called_with.<locals>._error_message at 0x7f9918cc3d80>
-cause = None
-
-    def assert_called_with(self, /, *args, **kwargs):
-        """assert that the last call was made with the specified arguments.
-    
-        Raises an AssertionError if the args and keyword args passed in are
-        different to the last call to the mock."""
-        if self.call_args is None:
-            expected = self._format_mock_call_signature(args, kwargs)
-            actual = 'not called.'
-            error_message = ('expected call not found.\nExpected: %s\n  Actual: %s'
-                    % (expected, actual))
-            raise AssertionError(error_message)
-    
-        def _error_message():
-            msg = self._format_mock_failure_message(args, kwargs)
-            return msg
-        expected = self._call_matcher(_Call((args, kwargs), two=True))
-        actual = self._call_matcher(self.call_args)
-        if actual != expected:
-            cause = expected if isinstance(expected, Exception) else None
->           raise AssertionError(_error_message()) from cause
-E           AssertionError: expected call not found.
-E           Expected: delete(cliente_id=1, produto_id=1)
-E             Actual: delete(1, 1)
-
-/usr/lib/python3.12/unittest/mock.py:944: AssertionError
-_____________________ test_remover_favorito_nao_encontrado _____________________
-
-mock_dependencies = (<MagicMock id='140295521181024'>, <MagicMock id='140295521137680'>, <AsyncMock id='140295521133312'>)
-
-    async def test_remover_favorito_nao_encontrado(mock_dependencies):
-        """Testa a remoção de um favorito que não existe."""
-        mock_repo, mock_produto_repo, mock_client = mock_dependencies
-        service = FavoritoService(mock_repo, mock_produto_repo, mock_client)
-    
-        # Configuração
-        mock_repo.delete.return_value = False
-    
-        # Execução
-        resultado = service.remover_favorito(cliente_id=1, produto_id=999)
-    
-        # Verificação
->       mock_repo.delete.assert_called_once_with(cliente_id=1, produto_id=999)
-
-tests/core/service/test_favorito_service.py:140: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-/usr/lib/python3.12/unittest/mock.py:956: in assert_called_once_with
-    return self.assert_called_with(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <MagicMock name='mock.delete' id='140295521129664'>, args = ()
-kwargs = {'cliente_id': 1, 'produto_id': 999}
-expected = call(cliente_id=1, produto_id=999), actual = call(1, 999)
-_error_message = <function NonCallableMock.assert_called_with.<locals>._error_message at 0x7f9918b2c4a0>
-cause = None
-
-    def assert_called_with(self, /, *args, **kwargs):
-        """assert that the last call was made with the specified arguments.
-    
-        Raises an AssertionError if the args and keyword args passed in are
-        different to the last call to the mock."""
-        if self.call_args is None:
-            expected = self._format_mock_call_signature(args, kwargs)
-            actual = 'not called.'
-            error_message = ('expected call not found.\nExpected: %s\n  Actual: %s'
-                    % (expected, actual))
-            raise AssertionError(error_message)
-    
-        def _error_message():
-            msg = self._format_mock_failure_message(args, kwargs)
-            return msg
-        expected = self._call_matcher(_Call((args, kwargs), two=True))
-        actual = self._call_matcher(self.call_args)
-        if actual != expected:
-            cause = expected if isinstance(expected, Exception) else None
->           raise AssertionError(_error_message()) from cause
-E           AssertionError: expected call not found.
-E           Expected: delete(cliente_id=1, produto_id=999)
-E             Actual: delete(1, 999)
-
-/usr/lib/python3.12/unittest/mock.py:944: AssertionError
 =============================== warnings summary ===============================
 venv/lib/python3.12/site-packages/passlib/utils/__init__.py:854
   /home/edson/repos/BE_AqiFome_RESTfull/venv/lib/python3.12/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
     from crypt import crypt as _crypt
 
 tests/core/repository/test_cliente_repository.py::test_create_cliente
-  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:34: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:37: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
     return Cliente.from_orm(db_cliente)
 
 tests/core/repository/test_cliente_repository.py::test_get_by_id_found
-  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:46: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:49: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
     return Cliente.from_orm(db_cliente) if db_cliente else None
 
 tests/core/repository/test_cliente_repository.py::test_list_clientes
 tests/core/repository/test_cliente_repository.py::test_list_clientes
-  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:67: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:70: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
     return [Cliente.from_orm(c) for c in self.db.query(ClienteORM).all()]
 
-tests/core/repository/test_cliente_repository.py::test_update_cliente_found
-  /home/edson/repos/BE_AqiFome_RESTfull/core/repository/cliente_repository.py:86: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
-    return Cliente.from_orm(db_cliente)
+tests/core/service/test_favorito_service.py::test_adicionar_favoritos_com_sucesso
+  /home/edson/repos/BE_AqiFome_RESTfull/tests/core/service/test_favorito_service.py:29: PydanticDeprecatedSince20: `parse_obj_as` is deprecated. Use `pydantic.TypeAdapter.validate_python` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    Produto(id=1, titulo="P1 Cache", preco=10, imagem=parse_obj_as(HttpUrl, "http://img1.com/img01.png")), # P1
+
+tests/core/service/test_favorito_service.py::test_adicionar_favoritos_com_sucesso
+  /home/edson/repos/BE_AqiFome_RESTfull/tests/core/service/test_favorito_service.py:38: PydanticDeprecatedSince20: `parse_obj_as` is deprecated. Use `pydantic.TypeAdapter.validate_python` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem=parse_obj_as(HttpUrl, "http://img1.com/img01.png"))),
+
+tests/core/service/test_favorito_service.py::test_adicionar_favoritos_com_sucesso
+  /home/edson/repos/BE_AqiFome_RESTfull/tests/core/service/test_favorito_service.py:39: PydanticDeprecatedSince20: `parse_obj_as` is deprecated. Use `pydantic.TypeAdapter.validate_python` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    FavoritoResponse(id=2, cliente_id=1, produto=Produto(id=2, titulo="P2", preco=20, imagem=parse_obj_as(HttpUrl, "http://img2.com/img02.png"))),
+
+tests/core/service/test_favorito_service.py::test_adicionar_favoritos_sem_novos_favoritos
+  /home/edson/repos/BE_AqiFome_RESTfull/tests/core/service/test_favorito_service.py:99: PydanticDeprecatedSince20: `parse_obj_as` is deprecated. Use `pydantic.TypeAdapter.validate_python` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    FavoritoResponse(id=1, cliente_id=1, produto=Produto(id=1, titulo="P1", preco=10, imagem=parse_obj_as(HttpUrl, "http://img1.com/img01.png")))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ================================ tests coverage ================================
@@ -421,28 +63,15 @@ core/domain/produto.py                      10      0   100%
 core/externos/fake_store_client.py          12      7    42%   8-14
 core/repository/__init__.py                  0      0   100%
 core/repository/cliente_orm.py               9      0   100%
-core/repository/cliente_repository.py       38      3    92%   57-58, 81
+core/repository/cliente_repository.py       39      2    95%   60-61
 core/repository/favorito_orm.py              8      0   100%
 core/repository/favorito_repository.py      26      0   100%
 core/repository/produto_orm.py              16      5    69%   20-25
 core/repository/produto_repository.py       24     12    50%   18, 24-25, 31-49
 core/security/security.py                   44     26    41%   21, 27, 33-40, 47-51, 57-75
 core/service/__init__.py                     0      0   100%
-core/service/cliente_service.py             20      9    55%   31-39, 48, 59, 71, 82
+core/service/cliente_service.py             20      4    80%   48, 59, 71, 82
 core/service/favorito_service.py            42      8    81%   44, 88-94
 ----------------------------------------------------------------------
-TOTAL                                      329     74    78%
-=========================== short test summary info ============================
-FAILED tests/core/domain/test_cliente.py::test_cliente_creation_with_defaults
-FAILED tests/core/domain/test_cliente.py::test_cliente_create_model - pydanti...
-FAILED tests/core/domain/test_cliente.py::test_cliente_model_valid_email - Fa...
-FAILED tests/core/repository/test_cliente_repository.py::test_update_cliente_found
-FAILED tests/core/repository/test_cliente_repository.py::test_update_cliente_not_found
-FAILED tests/core/repository/test_favorito_repository.py::test_create_many - ...
-FAILED tests/core/repository/test_favorito_repository.py::test_list_by_cliente
-FAILED tests/core/service/test_cliente_service.py::test_criar_cliente - pydan...
-FAILED tests/core/service/test_cliente_service.py::test_criar_cliente_com_email_existente
-FAILED tests/core/service/test_favorito_service.py::test_adicionar_favoritos_sem_novos_favoritos
-FAILED tests/core/service/test_favorito_service.py::test_remover_favorito_com_sucesso
-FAILED tests/core/service/test_favorito_service.py::test_remover_favorito_nao_encontrado
-================== 12 failed, 22 passed, 6 warnings in 3.24s ===================
+TOTAL                                      330     68    79%
+======================== 34 passed, 9 warnings in 2.97s ========================
