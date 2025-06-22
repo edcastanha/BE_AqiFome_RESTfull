@@ -1,6 +1,6 @@
 # API RESTfull - AQIFome
 
-Requisitos de execucão do projeto
+Requisitos de execucão do projeto localmente
 
 - Docker
 - Docker Compose
@@ -13,11 +13,11 @@ O aiqfome está expandindo seus canais de integração e precisa de uma API robu
 Essa funcionalidade será usada por apps e interfaces web para armazenar e consultar produtos marcados como favoritos pelos clientes. A API terá alto volume de uso e integrará com outros sistemas internos e externos.
 
 
-### 🔧 Sua missão:
+### 🔧 Desafio:
 Desenvolva uma API RESTful que permita:
 
 **Clientes**
-Criar, visualizar, editar e remover clientes.
+Criar, visualizar, editar e remover clientes(ADMIN).
 Dados obrigatórios: nome e e-mail.
 Um mesmo e-mail não pode se repetir no cadastro.
 
@@ -46,20 +46,19 @@ Buscar produto por ID:
 A API deve ser pública, mas conter autenticação e autorização.
 Evite duplicidade de dados.
 Estruture bem o código, seguindo boas práticas REST.
-Pense em performance e escalabilidade.
-Documente sua API (OpenAPI/Swagger é bem-vindo, mas opcional).
+Pense em performance e escalabilidade(nesta abordagem optei por um design orientado a replicar os dados de Produto ).
+Documente sua API (Swagger padrao do FASTAPI).
 Não use IA ou cópias. Será passível de eliminação.
 
 ### 💡 Requisitos Técnicos
 Você pode escolher uma das seguintes linguagens:
-* Go
-* Python 
+
+* Python
+* Framework FASTAPI  
+
 
 ### 🗄️ Banco de Dados sugerido:
-PostgreSQL (preferencial)
-MySQL
-MongoDB
-
+PostgreSQL
 
 ### 📊 O que esperamos:
 **Critério**	                            **Peso**
