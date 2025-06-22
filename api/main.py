@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 import logging
+from typing import Optional
 
 from core.externos.fake_store_product import FakeStoreProduct
 from core.config.db import SessionLocal, Base, engine
@@ -98,7 +99,18 @@ def root():
 
 # --- Clientes ---
 @app.post("/clientes", response_model=Cliente)
-def criar_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
+def criar_cliente(
+    cliente: ClienteCreate, 
+    db: Session = Depends(get_db), 
+    request: Optional[Request] = None,
+    summary="Manipula Clientes",
+    tags=["Clientes"],
+):
+    """
+    Cria um novo cliente.
+    O cliente deve fornecer ao menos e-mail e senha.
+    A senha será armazenada com hash.
+    """
     service = ClienteService(ClienteRepository(db))
     try:
         hashed_password = get_password_hash(cliente.senha.get_secret_value())
@@ -107,7 +119,11 @@ def criar_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
         )
         return service.criar_cliente(cliente_com_senha_hash)
     except ValueError as e:
+        logger.warning(f"Erro de validação ao criar cliente: {e}")
         return error_response(400, str(e))
+    except Exception as e:
+        logger.error(f"Erro inesperado ao criar cliente: {e}", exc_info=True)
+        return error_response(500, "Erro interno ao criar cliente")
 
 
 @app.get("/clientes", response_model=list[Cliente])
@@ -117,9 +133,13 @@ def listar_clientes(
     """
     Lista todos os clientes. Requer privilégios de administrador.
     """
-    service = ClienteService(ClienteRepository(db))
-    return service.listar_clientes()
-
+    try:
+        service = ClienteService(ClienteRepository(db))
+        return service.listar_clientes()
+    except Exception as e:
+        logger.error(f"Erro ao listar clientes: {e}", exc_info=True)
+        return error_response(500, "Erro interno ao listar clientes")
+    
 
 @app.get("/clientes/{cliente_id}", response_model=Cliente)
 def buscar_cliente(

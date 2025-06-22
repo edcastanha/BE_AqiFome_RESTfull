@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from pydantic import ValidationError
+from pydantic import ValidationError, SecretStr
 from sqlalchemy.orm import Session
 
 from core.domain.cliente import Cliente, ClienteCreate, TipoCliente
@@ -19,7 +19,7 @@ def repo(mock_db):
 
 
 def test_create_cliente(repo, mock_db):
-    cliente_data = ClienteCreate(nome="Novo Cliente", email="novo@exemplo.com", senha="password", tipo=TipoCliente.USER)
+    cliente_data = ClienteCreate(nome="Novo Cliente", email="novo@exemplo.com", senha=SecretStr("password"), tipo=TipoCliente.USER)
     # O repo irá criar um ClienteORM internamente
     # Precisamos mockar o que acontece depois do add, commit e refresh
     def refresh_side_effect(orm_object):
@@ -38,7 +38,7 @@ def test_create_cliente(repo, mock_db):
 
     assert created_cliente.id == 1
     assert created_cliente.nome == cliente_data.nome
-    assert created_cliente.senha == "password"
+    assert created_cliente.senha.get_secret_value() == "password"
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
     mock_db.refresh.assert_called_once()
@@ -79,7 +79,7 @@ def test_list_clientes(repo, mock_db):
     clientes = repo.list()
     assert len(clientes) == 2
     assert clientes[0].nome == "A"
-    assert clientes[1].senha == "pass2"
+    assert clientes[1].senha.get_secret_value() == "pass2"
 
 
 def test_update_cliente_found(repo, mock_db):
@@ -95,7 +95,7 @@ def test_update_cliente_found(repo, mock_db):
         id=3,
         nome="Novo Nome",
         email="novo@email.com",
-        senha="nova_senha",
+        senha=SecretStr("nova_senha"),
         tipo=TipoCliente.ADMIN,
     )
 
@@ -110,7 +110,7 @@ def test_update_cliente_found(repo, mock_db):
 def test_update_cliente_not_found(repo, mock_db):
     mock_db.query.return_value.filter.return_value.first.return_value = None
     cliente_update_data = Cliente(
-        id=4, nome="Nao Existe", email="nao@existe.com", senha="password", tipo=TipoCliente.USER
+        id=4, nome="Nao Existe", email="nao@existe.com", senha=SecretStr("password"), tipo=TipoCliente.USER
     )
     updated_cliente = repo.update(4, cliente_update_data)
     assert updated_cliente is None

@@ -41,18 +41,6 @@ class ClienteService:
             ValueError: Se o e-mail já estiver cadastrado.
         """
         if self.repository.get_by_email(cliente_data.email):
-    def criar_cliente(self, cliente_data: ClienteCreate) -> Cliente:
-        """
-        Cria um novo cliente após validação de unicidade do e-mail e hashing da senha.
-
-        Args:
-            cliente_data (ClienteCreate): Dados do cliente a ser criado.
-        Returns:
-            Cliente: Cliente criado.
-        Raises:
-            ValueError: Se o e-mail já estiver cadastrado.
-        """
-        if self.repository.get_by_email(cliente_data.email):
             raise ValueError("E-mail já cadastrado")
 
         hashed_password = get_password_hash(cliente_data.senha.get_secret_value())
