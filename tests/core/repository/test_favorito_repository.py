@@ -12,15 +12,16 @@ def mock_db():
 def repo(mock_db):
     return FavoritoRepository(db=mock_db)
 
-def test_create_favorito(repo, mock_db):
-    favorito = Favorito(id=1, cliente_id=1, produto_id=2, titulo="Produto", imagem="img.png", preco=10.0, review="bom")
-    mock_db.add.return_value = None
-    mock_db.commit.return_value = None
-    mock_db.refresh.return_value = None
-    Favorito.from_orm = MagicMock(return_value=favorito)
-    result = repo.create(favorito)
-    assert result.titulo == "Produto"
-    assert result.cliente_id == 1
+def test_create_favorito(db_session):
+    """Testa a criação de um novo favorito no repositório."""
+    repo = FavoritoRepository(db_session)
+    novo_favorito = Favorito(cliente_id=cliente.id, produto_id=produto.id)
+
+    favorito_criado = repo.create(novo_favorito)
+
+    assert favorito_criado.id is not None
+    assert favorito_criado.cliente_id == cliente.id
+    assert favorito_criado.produto_id == produto.id
 
 def test_list_by_cliente(repo, mock_db):
     favoritos_orm = [MagicMock(), MagicMock()]

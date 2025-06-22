@@ -1,6 +1,6 @@
 import pytest
 from core.repository.cliente_repository import ClienteRepository
-from core.domain.cliente import Cliente
+from core.domain.cliente import Cliente, ClienteCreate
 from sqlalchemy.orm import Session
 from unittest.mock import MagicMock
 
@@ -13,16 +13,17 @@ def repo(mock_db):
     return ClienteRepository(db=mock_db)
 
 def test_create_cliente(repo, mock_db):
-    cliente = Cliente(id=1, nome="João", email="joao@email.com")
+    cliente_data = ClienteCreate(nome="Novo Cliente", email="novo@exemplo.com", password="naousadoaqui")
+    hashed_password = "senha_hasheada_fake"
     mock_db.add.return_value = None
     mock_db.commit.return_value = None
     mock_db.refresh.return_value = None
     mock_db.query.return_value.filter.return_value.first.return_value = None
     # Simula o método from_orm
-    Cliente.from_orm = MagicMock(return_value=cliente)
-    result = repo.create(cliente)
-    assert result.nome == "João"
-    assert result.email == "joao@email.com"
+    Cliente.from_orm = MagicMock(return_value=cliente_data)
+    result = repo.create(cliente_data, hashed_password)
+    assert result.nome == "Novo Cliente"
+    assert result.email == "novo@exemplo.com"
 
 def test_get_by_id_found(repo, mock_db):
     cliente = Cliente(id=2, nome="Maria", email="maria@email.com")

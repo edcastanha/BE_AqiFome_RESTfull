@@ -1,38 +1,58 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
+from core.domain.produto import Produto
 
-class Favorito(BaseModel):
-    """
-    Modelo de dados para um produto favorito de um cliente.
 
-    Atributos:
-        id (Optional[int]): Identificador único do favorito.
-        cliente_id (int): ID do cliente.
-        produto_id (int): ID do produto (da API externa).
-        titulo (str): Título do produto.
-        imagem (str): URL da imagem do produto.
-        preco (float): Preço do produto.
-        review (Optional[str]): Avaliação do produto.
-    """
-    id: Optional[int]
+class FavoritoBase(BaseModel):
+    """Modelo base para Favorito com campos comuns."""
     cliente_id: int
     produto_id: int
-    titulo: str
-    imagem: str
-    preco: float
-    review: Optional[str]
 
+
+class FavoritoCreate(FavoritoBase):
+    """
+    DTO para a criação de um novo favorito (entrada da API).
+    Contém os IDs do cliente e do produto."""
     model_config = ConfigDict(
-        from_attributes=True,
         json_schema_extra={
             "example": {
-                "id": 1,
                 "cliente_id": 1,
-                "produto_id": 123,
-                "titulo": "Produto Exemplo",
-                "imagem": "https://example.com/imagem.jpg",
-                "preco": 29.99,
-                "review": "Excelente produto!"
+                "produto_id": 10
+            }
+        } 
+    )
+
+
+class FavoritoCreateRequest(BaseModel):
+    """DTO para a requisição de criação de um favorito."""
+    produto_id: int
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "produto_id": 1
             }
         }
     )
+
+
+class Favorito(FavoritoBase):
+    """
+    Modelo de domínio principal para Favorito.
+    Representa um favorito como ele existe no banco de dados.
+    """
+    id: int
+    produto: Optional[Produto] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FavoritoResponse(BaseModel):
+    """
+    Modelo de resposta para um favorito, incluindo os detalhes do produto.
+    """
+    id: int
+    cliente_id: int
+    produto: Produto
+
+    model_config = ConfigDict(from_attributes=True)
