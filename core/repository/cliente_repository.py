@@ -1,4 +1,4 @@
-from core.domain.cliente import Cliente
+from core.domain.cliente import Cliente, ClienteCreate, ClienteInDB
 from core.config.db import SessionLocal
 from core.repository.cliente_orm import ClienteORM
 from sqlalchemy.orm import Session
@@ -20,16 +20,14 @@ class ClienteRepository:
         """
         self.db = db or SessionLocal()
 
-    def create(self, cliente: Cliente) -> Cliente:
+    def create(self, cliente: ClienteCreate) -> Cliente:
         """
         Cria um novo cliente no banco de dados.
-
-        Args:
-            cliente (Cliente): Dados do cliente a ser criado.
-        Returns:
-            Cliente: Cliente criado com ID atribuído.
+        A senha já deve vir com hash do serviço.
         """
-        db_cliente = ClienteORM(nome=cliente.nome, email=cliente.email)
+        db_cliente = ClienteORM(
+            nome=cliente.nome, email=cliente.email, senha=cliente.senha
+        )
         self.db.add(db_cliente)
         self.db.commit()
         self.db.refresh(db_cliente)
@@ -47,17 +45,17 @@ class ClienteRepository:
         db_cliente = self.db.query(ClienteORM).filter(ClienteORM.id == cliente_id).first()
         return Cliente.from_orm(db_cliente) if db_cliente else None
 
-    def get_by_email(self, email: str) -> Optional[Cliente]:
+    def get_by_email(self, email: str) -> Optional[ClienteInDB]:
         """
-        Busca um cliente pelo e-mail.
+        Busca um cliente pelo e-mail, retornando o modelo com a senha.
 
         Args:
             email (str): E-mail do cliente.
         Returns:
-            Optional[Cliente]: Cliente encontrado ou None.
+            Optional[ClienteInDB]: Cliente encontrado ou None.
         """
         db_cliente = self.db.query(ClienteORM).filter(ClienteORM.email == email).first()
-        return Cliente.from_orm(db_cliente) if db_cliente else None
+        return ClienteInDB.from_orm(db_cliente) if db_cliente else None
 
     def list(self) -> List[Cliente]:
         """
