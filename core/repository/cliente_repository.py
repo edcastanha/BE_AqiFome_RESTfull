@@ -58,7 +58,7 @@ class ClienteRepository:
             Optional[ClienteInDB]: Cliente encontrado ou None.
         """
         db_cliente = self.db.query(ClienteORM).filter(ClienteORM.email == email).first()
-        return ClienteInDB.from_orm(db_cliente) if db_cliente else None
+        return ClienteInDB.model_validate(db_cliente) if db_cliente else None
 
     def list(self) -> List[Cliente]:
         """
@@ -67,15 +67,15 @@ class ClienteRepository:
         Returns:
             List[Cliente]: Lista de clientes.
         """
-        return [Cliente.from_orm(c) for c in self.db.query(ClienteORM).all()]
+        return [Cliente.model_validate(c) for c in self.db.query(ClienteORM).all()]
 
-    def update(self, cliente_id: int, cliente_update: Cliente) -> Cliente | None:
+    def update(self, cliente_id: int, cliente_update) -> Cliente | None:
         """
         Atualiza os dados de um cliente existente.
 
         Args:
             cliente_id (int): ID do cliente a ser atualizado.
-            cliente (Cliente): Novos dados do cliente.
+            cliente_update (ClienteUpdate): Novos dados do cliente (parciais).
         Returns:
             Optional[Cliente]: Cliente atualizado ou None se não encontrado.
         """

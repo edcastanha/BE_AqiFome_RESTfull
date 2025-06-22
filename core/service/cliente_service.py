@@ -1,4 +1,4 @@
-from core.domain.cliente import Cliente, ClienteCreate
+from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
 from core.repository.cliente_repository import ClienteRepository
 from core.security.security import get_password_hash
 
@@ -58,17 +58,17 @@ class ClienteService:
         """
         return self.repository.get_by_id(cliente_id)
 
-    def atualizar_cliente(self, cliente_id: int, cliente: Cliente):
+    def atualizar_cliente(self, cliente_id: int, cliente_update: ClienteUpdate):
         """
         Atualiza os dados de um cliente existente.
 
         Args:
             cliente_id (int): ID do cliente a ser atualizado.
-            cliente (Cliente): Novos dados do cliente.
+            cliente_update (ClienteUpdate): Novos dados do cliente (parciais).
         Returns:
             Cliente ou None: Cliente atualizado ou None se não encontrado.
         """
-        return self.repository.update(cliente_id, cliente)
+        return self.repository.update(cliente_id, cliente_update)
 
     def deletar_cliente(self, cliente_id: int):
         """

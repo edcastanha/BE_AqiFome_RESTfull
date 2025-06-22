@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
 import logging
 
 from core.externos.fake_store_client import FakeStoreClient
 from core.config.db import SessionLocal, Base, engine
-from core.domain.cliente import Cliente, ClienteCreate
+from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
 from core.domain.favorito import (
     FavoritoCreate,
     FavoritoCreateRequest,
@@ -32,6 +33,7 @@ logging.basicConfig(
 
 app = FastAPI(title="AqiFome RESTful API")
 
+# Cria as tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
 
 
@@ -73,16 +75,19 @@ def get_admin_user(current_user: Cliente = Depends(get_current_user)):
     return current_user
 
 
+def error_response(status_code: int, message: str) -> JSONResponse:
+    return JSONResponse(
+        status_code=status_code,
+        content={"error": {"code": status_code, "message": message}},
+    )
+
+
 @app.post("/token")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     cliente_repo = ClienteRepository(db)
     user = cliente_repo.get_by_email(email=form_data.username)
     if not user or not verify_password(form_data.password, user.senha):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        return error_response(401, "Usuário ou senha incorretos")
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -102,7 +107,7 @@ def criar_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
         )
         return service.criar_cliente(cliente_com_senha_hash)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return error_response(400, str(e))
 
 
 @app.get("/clientes", response_model=list[Cliente])
@@ -122,38 +127,28 @@ def buscar_cliente(
     db: Session = Depends(get_db),
     current_user: Cliente = Depends(get_current_user),
 ):
-    # Regra de autorização: Admin pode ver qualquer um, usuário normal só a si mesmo.
     if current_user.tipo != 1 and current_user.id != cliente_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Operation not permitted",
-        )
-
+        return error_response(403, "Operação não permitida")
     service = ClienteService(ClienteRepository(db))
     cliente = service.buscar_cliente(cliente_id)
     if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        return error_response(404, "Cliente não encontrado")
     return cliente
 
 
 @app.put("/clientes/{cliente_id}", response_model=Cliente)
 def atualizar_cliente(
     cliente_id: int,
-    cliente: Cliente,
+    cliente: ClienteUpdate,
     db: Session = Depends(get_db),
     current_user: Cliente = Depends(get_current_user),
 ):
-    # Regra de autorização: Admin pode atualizar qualquer um, usuário normal só a si mesmo.
     if current_user.tipo != 1 and current_user.id != cliente_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Operation not permitted",
-        )
-
+        return error_response(403, "Operação não permitida")
     service = ClienteService(ClienteRepository(db))
     atualizado = service.atualizar_cliente(cliente_id, cliente)
     if not atualizado:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        return error_response(404, "Cliente não encontrado")
     return atualizado
 
 
@@ -163,23 +158,18 @@ def deletar_cliente(
     db: Session = Depends(get_db),
     current_user: Cliente = Depends(get_current_user),
 ):
-    # Regra de autorização: Admin pode deletar qualquer um, usuário normal só a si mesmo.
     if current_user.tipo != 1 and current_user.id != cliente_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Operation not permitted",
-        )
-
+        return error_response(403, "Operação não permitida")
     service = ClienteService(ClienteRepository(db))
     if not service.deletar_cliente(cliente_id):
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        return error_response(404, "Cliente não encontrado")
     return {"ok": True}
 
 
 # --- Favoritos ---
 @app.post(
     "/clientes/{cliente_id}/favoritos",
-    response_model=list[FavoritoResponse],  # Correção aqui
+    response_model=list[FavoritoResponse],
     status_code=status.HTTP_201_CREATED,
     summary="Adicionar um produto aos favoritos de um cliente",
     tags=["Favoritos"],
@@ -190,14 +180,8 @@ async def adicionar_favoritos(
     service: FavoritoService = Depends(get_favorito_service),
     current_user: Cliente = Depends(get_current_user),
 ):
-    """
-    Adiciona um ou mais produtos à lista de favoritos de um cliente.
-    """
     if cliente_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Operation not permitted",
-        )
+        return error_response(403, "Operação não permitida")
     try:
         favoritos_criados = await service.adicionar_favoritos(
             cliente_id=cliente_id, produto_ids=request_data.produto_ids
@@ -205,10 +189,11 @@ async def adicionar_favoritos(
         return favoritos_criados
     except ValueError as e:
         logger.error(f"Erro ao adicionar favoritos: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
+        return error_response(400, str(e))
     except Exception as e:
         logger.error(f"Erro ao adicionar favoritos: {e}")
-        raise HTTPException(status_code=500, detail=f"Ocorreu um erro interno: {e}")
+        return error_response(500, f"Ocorreu um erro interno: {e}")
+
 
 @app.get("/clientes/{cliente_id}/favoritos", response_model=list[FavoritoResponse])
 def listar_favoritos(
@@ -217,10 +202,7 @@ def listar_favoritos(
     current_user: Cliente = Depends(get_current_user),
 ):
     if cliente_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Operation not permitted",
-        )
+        return error_response(403, "Operação não permitida")
     return service.listar_favoritos(cliente_id)
 
 
@@ -232,10 +214,7 @@ def remover_favorito(
     current_user: Cliente = Depends(get_current_user),
 ):
     if cliente_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Operation not permitted",
-        )
+        return error_response(403, "Operação não permitida")
     if not service.remover_favorito(cliente_id, produto_id):
-        raise HTTPException(status_code=404, detail="Favorito não encontrado")
+        return error_response(404, "Favorito não encontrado")
     return {"ok": True}

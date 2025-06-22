@@ -2,6 +2,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+from pydantic import SecretStr
 
 # Adiciona o diretório raiz ao path para encontrar os módulos da aplicação
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -23,7 +24,11 @@ def seed_database():
     try:
         admin_email = os.getenv("SEED_ADMIN_EMAIL")
         admin_password = os.getenv("SEED_ADMIN_PASSWORD")
-        admin_name = os.getenv("SEED_ADMIN_NAME", "ADMIN") # Nome padrão "Admin User"
+        admin_nome = os.getenv("SEED_admin_nome")
+        admin_tipo = os.getenv("SEED_ADMIN_TIPO")
+
+        tipo_map = {"ADMIN": 1, "USER": 0}
+        admin_tipo = tipo_map.get(admin_tipo.upper(), 1)
 
         if not admin_email or not admin_password:
             print("ERRO: As variáveis de ambiente SEED_ADMIN_EMAIL e SEED_ADMIN_PASSWORD devem ser definidas no arquivo .env")
@@ -38,12 +43,13 @@ def seed_database():
             print(f"O usuário '{admin_email}' já existe. Nenhuma ação necessária.")
             return
 
-        print(f"Criando usuário administrador: {admin_name} ({admin_email})")
+        print(f"Criando usuário administrador: {admin_nome} ({admin_email})")        
         
         admin_user_data = ClienteCreate(
-            nome=admin_name,
+            nome=admin_nome,
             email=admin_email,
-            senha=admin_password
+            senha=SecretStr(admin_password),
+            tipo=admin_tipo
         )
         cliente_service.criar_cliente(admin_user_data)
 

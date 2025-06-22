@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, SecretStr
 from enum import IntEnum
 
 class TipoCliente(IntEnum):
@@ -9,7 +9,7 @@ class TipoCliente(IntEnum):
 
 class ClienteBase(BaseModel):
     email: EmailStr
-    senha: str
+    senha: SecretStr
     tipo: TipoCliente
 
 
@@ -19,7 +19,7 @@ class ClienteCreate(ClienteBase):
 
 
 class Cliente(ClienteBase):
-    id: Optional[int]
+    id: int
     nome: str
 
     model_config = ConfigDict(
@@ -36,4 +36,15 @@ class Cliente(ClienteBase):
 
 
 class ClienteInDB(Cliente):
-    senha: str
+    """
+    Modelo que inclui a senha, usado para autenticação.
+    """
+    email: EmailStr
+    senha: SecretStr
+
+
+class ClienteUpdate(BaseModel):
+    nome: Optional[str] = None
+    email: Optional[EmailStr] = None
+    senha: Optional[SecretStr] = None
+    tipo: Optional[TipoCliente] = None
