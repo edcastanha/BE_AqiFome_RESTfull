@@ -8,7 +8,6 @@ def test_favorito_model():
     assert favorito.titulo == "Produto Exemplo"
     assert favorito.imagem == "url"
     assert favorito.preco == 10.0
-    assert favorito.review == "Ótimo!"
     # Testa representação
     assert str(favorito) == str(favorito)
 

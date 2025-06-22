@@ -16,6 +16,5 @@ class Produto(BaseModel):
     descricao: Optional[str] = None
     categoria: Optional[str] = None
     imagem: HttpUrl
-    avaliacao: Optional[float] = None
 
     model_config = ConfigDict(from_attributes=True)
