@@ -1,6 +1,6 @@
 # API RESTfull - AQIFome
 
-![Content C4](./arquitetura_docs/C4/Context.png)
+<center>![Content C4](./arquitetura_docs/C4/Context.png)</center>
 
 
 ## Considerações 
@@ -13,7 +13,7 @@ A escolha do PostgreSQL como banco de dados relacional garante robustez e confia
 
 Obs.: Pensando em maior escalabilidade conforme requisitos futuros, pode-se considerar a possibilidade de utilizar o Redis para cache de produtos favoritos, melhorando a performance em consultas frequentes ou aplicação de mensageria para processamento assíncrono de tarefas, como consulta de API externa ou atualizações de produtos favoritos.
 
-### [PLano de Tarefas:](arquitetura_docs/plano_tarefas.md)
+### [Plano de Tarefas:](arquitetura_docs/plano_tarefas.md)
 
 A API foi desenvolvida utilizando o framework FastAPI, que oferece alta performance e facilidade de uso, além de suporte nativo para documentação automática via Swagger e ReDoc. A estrutura do projeto segue práticas (DDD) aplicando a organização na pasta [CORE](src/core) com separação clara entre camadas de domínio, serviços, repositórios, aplitivo RESTful WEB na [API](src/api) e e servico de APIs Fake em [EXTERNO](src/externos).
 
@@ -25,8 +25,7 @@ Autenticação é realizada através de tokens JWT, garantindo que apenas usuár
 
 ======================
 
-## 🔧 Desafio:
-Desenvolva uma API RESTful [DESCRITO na DESAFIO](DESAFIO.md)
+## 🔧 [DESCRITO na DESAFIO](DESAFIO.md)
 
 **Clientes**
 Criar, visualizar, editar e remover clientes(ADMIN).
@@ -44,14 +43,12 @@ Utilizado os endpoints de produtos da API => https://fakestoreapi.com/
 
 ### 💡 Requisitos Técnicos Escolhidos
 Você pode escolher uma das seguintes linguagens:
-    * Docker
-    * Docker Compose
-    * Python
-    * Framework FASTAPI  
-    * PostgreSQL
-    * Redis 
-
-![Content C4](./arquitetura_docs/C4/Components.png)
+- Docker
+- Docker Compose
+- Python
+- Framework FASTAPI  
+- PostgreSQL
+- Redis 
 
 ### 🛠️ [Guia de Execução do Ambiente Local (Desenvolvimento)](INSTALL.md)
 
@@ -130,8 +127,8 @@ Essa organização facilita a colaboração, a escalabilidade e a manutenção d
   1. Busca todos os favoritos do cliente (apenas IDs).
   2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
 
-## 🧩 Design System e Arquitetura do Projeto
-
+<center>## 🧩 Design System e Arquitetura do Projeto
+    ![Components C4](./arquitetura_docs/C4/Componets.png)</center>
 Pensando em escalabilidade levei em consideração que poderiamos replicar N pods com a API AiQFome.
 
 Caso necessario, optar por instancias DB (Postgres) Master e Slave, e também considerar o uso de Redis para cache de produtos favoritos, melhorando a performance em consultas frequentes.
