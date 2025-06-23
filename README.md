@@ -1,6 +1,6 @@
 # API RESTfull - AQIFome
 
-<center>![Content C4](./arquitetura_docs/C4/Context.png)</center>
+<div style="text-align: center;">![Content C4](./arquitetura_docs/C4/Context.png)</div>
 
 
 ## Considerações 
@@ -21,7 +21,7 @@ A implementação inclui endpoints para gerenciar clientes e favoritos, com vali
 Autenticação é realizada através de tokens JWT, garantindo que apenas usuários autenticados possam acessar as funcionalidades da API.
 
 # API RESTful - AQIFome
-![Content C4](./arquitetura_docs/C4/Container.png)
+<div style="text-align: center;">![Content C4](./arquitetura_docs/C4/Container.png)</div>div>
 
 ======================
 
@@ -127,7 +127,7 @@ Essa organização facilita a colaboração, a escalabilidade e a manutenção d
   2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
 
 <center>## 🧩 Design System e Arquitetura do Projeto
-    ![Components C4](./arquitetura_docs/C4/Componets.png)</center>
+<div style="text-align: center;">!![Components C4](./arquitetura_docs/C4/Componets.png)</div>
 Pensando em escalabilidade levei em consideração que poderiamos replicar N pods com a API AiQFome.
 
 Caso necessario, optar por instancias DB (Postgres) Master e Slave, e também considerar o uso de Redis para cache de produtos favoritos, melhorando a performance em consultas frequentes.
