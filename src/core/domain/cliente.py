@@ -48,3 +48,9 @@ class ClienteUpdate(BaseModel):
     """
     nome: Optional[str] = None
     senha: Optional[SecretStr] = None
+
+
+class ClienteNaoEncontradoError(Exception):
+    """Exceção para cliente não encontrado."""
+
+    pass

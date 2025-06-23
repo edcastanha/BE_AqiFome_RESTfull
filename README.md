@@ -126,8 +126,10 @@ Essa organização facilita a colaboração, a escalabilidade e a manutenção d
   1. Busca todos os favoritos do cliente (apenas IDs).
   2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
 
-<center>## 🧩 Design System e Arquitetura do Projeto
-<div style="text-align: center;">!![Components C4](./arquitetura_docs/C4/Componets.png)</div>
+## 🧩 Design System e Arquitetura do Projeto
+
+![Components C4](./arquitetura_docs/C4/Componet.png)
+
 Pensando em escalabilidade levei em consideração que poderiamos replicar N pods com a API AiQFome.
 
 Caso necessario, optar por instancias DB (Postgres) Master e Slave, e também considerar o uso de Redis para cache de produtos favoritos, melhorando a performance em consultas frequentes.
@@ -135,6 +137,7 @@ Caso necessario, optar por instancias DB (Postgres) Master e Slave, e também co
 Ainda se necessario, podemos aplicar mensageria para processamento assíncrono de tarefas, como consulta de API externa ou atualizações de produtos favoritos.
 
 ## Melhorias Futuras
+
 - Implementar OpenTelemetry para monitoramento e rastreamento distribuído.
 - Adicionar testes de integração para garantir a qualidade do código.
 - Implementar CI/CD para automação de deploy e testes.

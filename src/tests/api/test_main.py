@@ -37,42 +37,43 @@ def test_crud_cliente_e_favoritos(mock_redis_config, mock_fake_store):
     # Criar cliente
     cliente_data = {
         "nome": "Test User",
-        "email": "testuser@example.com",
+        "email": "testuser_crud@example.com",  # E-mail único para este teste
         "senha": "senha123",
-        "tipo": 1
+        "tipo": 0  # Tipo USER normal
     }
 
-
-    # Login
-    resp = client.post("/token", data={"username": cliente_data["email"], "password": cliente_data["senha"]})
-    assert resp.status_code == 200
-
-    token = resp.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # Autenticado
-    resp = client.post("/clientes", json=cliente_data, headers=headers)
-    assert resp.status_code == 201
+    # 1. Criar o cliente primeiro (sem token, pois é um endpoint público ou de admin)
+    # Para este teste, vamos assumir que a criação de cliente não exige token.
+    # Se exigisse, precisaríamos de um token de admin.
+    resp = client.post("/clientes", json=cliente_data)
+    assert resp.status_code == 201, f"Erro ao criar cliente: {resp.text}"
     cliente = resp.json()
     cliente_id = cliente["id"]
 
 
-    # Listar clientes (não admin)
+    # 2. Login com o novo cliente
+    resp = client.post("/token", data={"username": cliente_data["email"], "password": cliente_data["senha"]})
+    assert resp.status_code == 200, f"Erro no login: {resp.text}"
+
+    token = resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 3. Listar clientes (deve falhar, pois o usuário não é admin)
     resp = client.get("/clientes", headers=headers)
     assert resp.status_code == 403
 
-    # Buscar cliente
+    # 4. Buscar o próprio cliente (deve funcionar)
     resp = client.get(f"/clientes/{cliente_id}", headers=headers)
     assert resp.status_code == 200
-    assert resp.json()["email"] == "testuser@example.com"
+    assert resp.json()["email"] == cliente_data["email"]
 
-    # Atualizar cliente
-    update_data = {"nome": "Novo Nome", "email": "testuser@example.com", "senha": "nova123", "tipo": 0}
+    # 5. Atualizar o próprio cliente
+    update_data = {"nome": "Novo Nome"}
     resp = client.put(f"/clientes/{cliente_id}", json=update_data, headers=headers)
     assert resp.status_code == 200
     assert resp.json()["nome"] == "Novo Nome"
 
-    # Adicionar favorito
+    # 6. Adicionar favorito
     fav_data = {"produto_ids": [1]}
     resp = client.post(f"/clientes/{cliente_id}/favoritos", json=fav_data, headers=headers)
     assert resp.status_code == 201
