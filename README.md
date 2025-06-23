@@ -25,7 +25,7 @@ Autenticação é realizada através de tokens JWT, garantindo que apenas usuár
 
 ======================
 
-## 🔧 [DESCRITO na DESAFIO](DESAFIO.md)
+## [Do Desafio Proposto](DESAFIO.md)
 
 **Clientes**
 Criar, visualizar, editar e remover clientes(ADMIN).
@@ -41,7 +41,7 @@ Produtos favoritos devem exibir: ID, título, imagem, preço e review (se houver
 **API Externa**
 Utilizado os endpoints de produtos da API => https://fakestoreapi.com/
 
-### 💡 Requisitos Técnicos Escolhidos
+### Requisitos Técnicos Escolhidos
 Você pode escolher uma das seguintes linguagens:
 - Docker
 - Docker Compose
@@ -50,7 +50,7 @@ Você pode escolher uma das seguintes linguagens:
 - PostgreSQL
 - Redis 
 
-### 🛠️ [Guia de Execução do Ambiente Local (Desenvolvimento)](INSTALL.md)
+###  [Guia de Execução no Ambiente Local (Desenvolvimento)](INSTALL.md)
 
 ```bash
 git clone https://github.com/edcastanha/BE_AqiFome_RESTfull.git
@@ -75,12 +75,14 @@ Resultando na criação de um cliente padrão e popular o banco de dados:
 
 Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.container](./infra/.env.container).
 
+** Confira os logs dos Containers para confirmacao de inicializacao **
+
 ![Autenticação](./arquitetura_docs/img/auth_admin_seed.png)
 
 
-## 📚 Documentação da API
+## Documentação da API
 
-### 📦 Estrutura do Projeto
+** Estrutura do Projeto **
 
 ```
 BE_AqiFome_RESTfull/
@@ -126,7 +128,7 @@ Essa organização facilita a colaboração, a escalabilidade e a manutenção d
   1. Busca todos os favoritos do cliente (apenas IDs).
   2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
 
-## 🧩 Design System e Arquitetura do Projeto
+## Design System e Arquitetura do Projeto
 
 ![Components C4](./arquitetura_docs/C4/Componet.png)
 
