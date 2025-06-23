@@ -1,10 +1,11 @@
-import pytest
 from unittest.mock import MagicMock, AsyncMock, call
+import pytest
 from core.domain.favorito import Favorito, FavoritoResponse, FavoritoCreate, ProdutoExterno
 from core.service.favorito_service import FavoritoService
 from externos.fake_store_product import FakeStoreProduct
 
 pytestmark = pytest.mark.asyncio
+
 
 @pytest.fixture
 def mock_dependencies():
@@ -14,12 +15,15 @@ def mock_dependencies():
     mock_redis = MagicMock()
     return mock_repo, mock_fake_store, mock_redis
 
+
 @pytest.fixture
 def service(mock_dependencies):
     """Fixture para criar uma instância do FavoritoService com mocks."""
     mock_repo, mock_fake_store, mock_redis = mock_dependencies
-    # Instancia o serviço passando os mocks
-    return FavoritoService(repository=mock_repo, fake_store_product=mock_fake_store, redis_client=mock_redis)
+    return FavoritoService(
+        repository=mock_repo, fake_store_product=mock_fake_store, redis_client=mock_redis
+    )
+
 
 async def test_adicionar_favoritos_com_sucesso(service, mock_dependencies):
     """Testa adicionar favoritos com sucesso (cache miss e hit)."""
@@ -28,7 +32,7 @@ async def test_adicionar_favoritos_com_sucesso(service, mock_dependencies):
     # --- Configuração dos Mocks ---
     # Produto 1 (cache hit), Produto 2 (cache miss), Produto 3 (já favorito)
     mock_redis.get.side_effect = [
-        b'''{"id": 1, "titulo": "P1 Cache", "preco": 10, "imagem": "http://img1.com/img01.png"}''', # P1
+        b'{"id": 1, "titulo": "P1 Cache", "preco": 10, "imagem": "http://img1.com/img01.png"}', # P1
         None, # P2
     ]
     mock_fake_store.get_product.return_value = {
@@ -70,7 +74,7 @@ async def test_listar_favoritos(service, mock_dependencies):
         Favorito(id=2, cliente_id=1, produto_id=20)
     ]
     mock_redis.get.side_effect = [
-        b'''{"id": 10, "titulo": "P10 Cache", "preco": 10, "imagem": "img10.png"}''', # P10 (cache hit)
+        b'{"id": 10, "titulo": "P10 Cache", "preco": 10, "imagem": "img10.png"}', # P10 (cache hit)
         None # P20 (cache miss)
     ]
     mock_fake_store.get_product_sync.return_value = {
@@ -85,14 +89,17 @@ async def test_listar_favoritos(service, mock_dependencies):
     assert response[0].produto.titulo == "P10 Cache"
     assert response[1].produto.titulo == "P20 API"
     mock_fake_store.get_product_sync.assert_called_once_with(20)
+
+    # Verifica se o produto foi adicionado ao cache
     mock_redis.set.assert_called_once_with("produto:20", '''{"id": 20, "titulo": "P20 API", "preco": 20, "imagem": "img20.png"}''', ex=3600)
 
-def test_remover_favorito(service, mock_dependencies):
+@pytest.mark.asyncio
+async def test_remover_favorito(service, mock_dependencies):
     """Testa a remoção de um favorito."""
     mock_repo, _, _ = mock_dependencies
     mock_repo.delete.return_value = True
-    
+
     result = service.remover_favorito(cliente_id=1, produto_id=1)
-    
+
     mock_repo.delete.assert_called_once_with(1, 1)
     assert result is True

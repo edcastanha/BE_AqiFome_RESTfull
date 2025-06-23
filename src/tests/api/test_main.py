@@ -39,18 +39,23 @@ def test_crud_cliente_e_favoritos(mock_redis_config, mock_fake_store):
         "nome": "Test User",
         "email": "testuser@example.com",
         "senha": "senha123",
-        "tipo": 0
+        "tipo": 1
     }
-    resp = client.post("/clientes", json=cliente_data)
+
+
+    # Login
+    resp = client.post("/token", data={"username": cliente_data["email"], "password": cliente_data["senha"]})
     assert resp.status_code == 200
+
+    token = resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Autenticado
+    resp = client.post("/clientes", json=cliente_data, headers=headers)
+    assert resp.status_code == 201
     cliente = resp.json()
     cliente_id = cliente["id"]
 
-    # Login
-    resp = client.post("/token", data={"username": "testuser@example.com", "password": "senha123"})
-    assert resp.status_code == 200
-    token = resp.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
 
     # Listar clientes (não admin)
     resp = client.get("/clientes", headers=headers)
