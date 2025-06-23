@@ -1,4 +1,9 @@
-from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
+from core.domain.cliente import (
+    Cliente,
+    ClienteCreate,
+    ClienteUpdate,  # Alterado de ClienteUpdateRequest
+    ClienteNaoEncontradoError,
+)
 from core.repository.cliente_repository import ClienteRepository
 from core.security.security import get_password_hash
 
@@ -66,24 +71,29 @@ class ClienteService:
         """
         return self.repository.get_by_id(cliente_id)
 
-    def atualizar_cliente(self, cliente_id: int, cliente_update: ClienteUpdate):
+    def atualizar_cliente(
+        self, cliente_id: int, cliente_update: ClienteUpdate
+    ) -> Cliente:
         """
-        Atualiza os dados de um cliente existente.
+        Atualiza um cliente existente.
 
         Args:
-            cliente_id (int): ID do cliente a ser atualizado.
-            cliente_update (ClienteUpdate): Novos dados do cliente (parciais).
+            cliente_id (int): O ID do cliente a ser atualizado.
+            cliente_update (ClienteUpdate): Os dados de atualização do cliente.
+
         Returns:
-            Cliente ou None: Cliente atualizado ou None se não encontrado.
+            Cliente: O cliente atualizado.
+
+        Raises:
+            ClienteNaoEncontradoError: Se o cliente não for encontrado.
         """
-        update_data = cliente_update.model_dump(exclude_unset=True)
+        # O repositório agora lida com o objeto Pydantic diretamente
+        cliente_atualizado = self.repository.update(cliente_id, cliente_update)
 
-        if "senha" in update_data and cliente_update.senha is not None:
-            # Extrai o valor do SecretStr e gera o hash
-            senha_str = cliente_update.senha.get_secret_value()
-            update_data["senha"] = get_password_hash(senha_str)
+        if not cliente_atualizado:
+            raise ClienteNaoEncontradoError()
 
-        return self.repository.update(cliente_id, update_data)
+        return cliente_atualizado
 
     def deletar_cliente(self, cliente_id: int):
         """

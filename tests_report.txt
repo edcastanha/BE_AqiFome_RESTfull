@@ -3,65 +3,125 @@ platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
 rootdir: /home/edson/repos/BE_AqiFome_RESTfull
 plugins: anyio-4.9.0, cov-6.2.1, asyncio-1.0.0
 asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collected 38 items
+collected 34 items / 1 error
 
-src/tests/api/test_main.py ..F.                                          [ 10%]
-src/tests/core/domain/test_cliente.py .......                            [ 28%]
-src/tests/core/domain/test_favorito.py ......                            [ 44%]
-src/tests/core/repository/test_cliente_repository.py ........            [ 65%]
-src/tests/core/repository/test_favorito_repository.py ......             [ 81%]
-src/tests/core/service/test_cliente_service.py ....                      [ 92%]
-src/tests/core/service/test_favorito_service.py ...                      [100%]
+==================================== ERRORS ====================================
+_________________ ERROR collecting src/tests/api/test_main.py __________________
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:145: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:3297: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:1264: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:713: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+.virtual/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py:224: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:675: in __init__
+    self.__connect()
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:901: in __connect
+    with util.safe_reraise():
+.virtual/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py:224: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:897: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/default.py:625: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/psycopg2/__init__.py:122: in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   psycopg2.OperationalError: connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+E   	Is the server running on that host and accepting TCP/IP connections?
 
-=================================== FAILURES ===================================
-________________________ test_crud_cliente_e_favoritos _________________________
-
-mock_redis_config = <MagicMock name='RedisConfig' id='139798209216880'>
-mock_fake_store = <MagicMock name='FakeStoreProduct' id='139798196101216'>
-
-    @patch("core.service.favorito_service.FakeStoreProduct")
-    @patch("core.service.favorito_service.RedisConfig")
-    def test_crud_cliente_e_favoritos(mock_redis_config, mock_fake_store):
-        # Mock Redis
-        mock_redis = MagicMock()
-        mock_redis.get.return_value = None
-        mock_redis.set.return_value = True
-        mock_redis_config.return_value.get_client.return_value = mock_redis
-        mock_redis_config.return_value.get_expires.return_value = 3600
-    
-        # Mock FakeStoreProduct
-        mock_fake_store.return_value.get_product.return_value = {
-            "id": 1, "titulo": "Produto Teste", "imagem": "img.png", "preco": 10.0
-        }
-        mock_fake_store.return_value.get_product_sync.return_value = {
-            "id": 1, "titulo": "Produto Teste", "imagem": "img.png", "preco": 10.0
-        }
-    
-        # Criar cliente
-        cliente_data = {
-            "nome": "Test User",
-            "email": "testuser@example.com",
-            "senha": "senha123",
-            "tipo": 0
-        }
-    
-    
-        # Login
-        resp = client.post("/token", data={"username": "testuser@example.com", "password": "senha123"})
-        assert resp.status_code == 200
-    
-        token = resp.json()["access_token"]
-        headers = {"Authorization": f"Bearer {token}"}
-    
-        # Autenticado
-        resp = client.post("/clientes", json=cliente_data, headers=headers)
->       assert resp.status_code == 201
-E       assert 400 == 201
-E        +  where 400 = <Response [400 Bad Request]>.status_code
-
-src/tests/api/test_main.py:55: AssertionError
------------------------------- Captured log call -------------------------------
-WARNING  uvicorn.error:main.py:105 Erro de validação ao criar cliente: E-mail já cadastrado
+The above exception was the direct cause of the following exception:
+src/tests/api/test_main.py:4: in <module>
+    from api.main import app
+src/api/main.py:35: in <module>
+    Base.metadata.create_all(bind=engine)
+.virtual/lib/python3.12/site-packages/sqlalchemy/sql/schema.py:5924: in create_all
+    bind._run_ddl_visitor(
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:3247: in _run_ddl_visitor
+    with self.begin() as conn:
+/usr/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:3237: in begin
+    with self.connect() as conn:
+         ^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:3273: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:147: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2436: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:145: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/base.py:3297: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:1264: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:713: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+.virtual/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py:224: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:675: in __init__
+    self.__connect()
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:901: in __connect
+    with util.safe_reraise():
+.virtual/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py:224: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+.virtual/lib/python3.12/site-packages/sqlalchemy/pool/base.py:897: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/sqlalchemy/engine/default.py:625: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.virtual/lib/python3.12/site-packages/psycopg2/__init__.py:122: in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+E   	Is the server running on that host and accepting TCP/IP connections?
+E   
+E   (Background on this error at: https://sqlalche.me/e/20/e3q8)
 =============================== warnings summary ===============================
 .virtual/lib/python3.12/site-packages/passlib/utils/__init__.py:854
   /home/edson/repos/BE_AqiFome_RESTfull/.virtual/lib/python3.12/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
@@ -69,5 +129,6 @@ WARNING  uvicorn.error:main.py:105 Erro de validação ao criar cliente: E-mail 
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-FAILED src/tests/api/test_main.py::test_crud_cliente_e_favoritos - assert 400...
-=================== 1 failed, 37 passed, 1 warning in 1.69s ====================
+ERROR src/tests/api/test_main.py - sqlalchemy.exc.OperationalError: (psycopg2...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 warning, 1 error in 4.34s ==========================
