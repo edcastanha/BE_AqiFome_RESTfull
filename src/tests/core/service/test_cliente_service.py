@@ -53,6 +53,8 @@ def test_atualizar_cliente_com_senha(mock_get_password_hash):
     """
     # Configuração
     mock_repo = MagicMock()
+    # O serviço primeiro busca o cliente para garantir que ele existe.
+    mock_repo.get_by_id.return_value = MagicMock()
     mock_get_password_hash.return_value = "nova_senha_hasheada"
     service = ClienteService(mock_repo)
     cliente_id = 1
@@ -65,15 +67,19 @@ def test_atualizar_cliente_com_senha(mock_get_password_hash):
     service.atualizar_cliente(cliente_id, update_data)
 
     # Verificação
+    mock_repo.get_by_id.assert_called_once_with(cliente_id)
     mock_get_password_hash.assert_called_once_with("nova_senha_123")
     mock_repo.update.assert_called_once()
 
     # Verifica se o repositório foi chamado com os dados corretos
     args, _ = mock_repo.update.call_args
     assert args[0] == cliente_id
-    update_payload = args[1]
-    assert update_payload["nome"] == "Novo Nome"
-    assert update_payload["senha"] == "nova_senha_hasheada"
+    # O segundo argumento é o objeto Pydantic ClienteUpdate, não um dicionário
+    update_payload_obj = args[1]
+    assert isinstance(update_payload_obj, ClienteUpdate)
+    assert update_payload_obj.nome == "Novo Nome"
+    # O serviço deve ter trocado a senha original pela hasheada
+    assert update_payload_obj.senha.get_secret_value() == "nova_senha_hasheada"
 
 
 def test_atualizar_cliente_sem_senha():
@@ -82,6 +88,8 @@ def test_atualizar_cliente_sem_senha():
     """
     # Configuração
     mock_repo = MagicMock()
+    # O serviço primeiro busca o cliente para garantir que ele existe.
+    mock_repo.get_by_id.return_value = MagicMock()
     service = ClienteService(mock_repo)
     cliente_id = 1
     update_data = ClienteUpdate(nome="Outro Nome")
@@ -90,8 +98,13 @@ def test_atualizar_cliente_sem_senha():
     service.atualizar_cliente(cliente_id, update_data)
 
     # Verificação
+    mock_repo.get_by_id.assert_called_once_with(cliente_id)
     mock_repo.update.assert_called_once()
     args, _ = mock_repo.update.call_args
     assert args[0] == cliente_id
-    update_payload = args[1]
-    assert "senha" not in update_payload
+    # O segundo argumento é o objeto Pydantic ClienteUpdate
+    update_payload_obj = args[1]
+    assert isinstance(update_payload_obj, ClienteUpdate)
+    assert update_payload_obj.nome == "Outro Nome"
+    # A senha não foi fornecida, então deve ser None no objeto de atualização
+    assert update_payload_obj.senha is None
