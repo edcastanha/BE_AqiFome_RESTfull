@@ -114,7 +114,6 @@ class ClienteRepository:
             update_data = cliente_update.model_dump(exclude_unset=True)
             for key, value in update_data.items():
                 setattr(cliente_orm, key, value)
-
             self.db.commit()
             self.db.refresh(cliente_orm)
             return Cliente.model_validate(cliente_orm)

@@ -1,46 +1,23 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0 -- /home/edson/repos/BE_AqiFome_RESTfull/venv/bin/python3
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0 -- /home/edson/repos/BE_AqiFome_RESTfull/.virtual/bin/python3
 cachedir: .pytest_cache
 rootdir: /home/edson/repos/BE_AqiFome_RESTfull
 plugins: anyio-4.9.0, cov-6.2.1, asyncio-1.0.0
 asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collecting ... collected 36 items
+collecting ... collected 35 items / 1 error
 
-tests/core/domain/test_cliente.py::test_cliente_creation_with_defaults PASSED [  2%]
-tests/core/domain/test_cliente.py::test_cliente_creation_as_admin PASSED [  5%]
-tests/core/domain/test_cliente.py::test_cliente_create_model PASSED      [  8%]
-tests/core/domain/test_cliente.py::test_cliente_model_from_orm PASSED    [ 11%]
-tests/core/domain/test_cliente.py::test_cliente_indb_model PASSED        [ 13%]
-tests/core/domain/test_cliente.py::test_cliente_model_invalid_email PASSED [ 16%]
-tests/core/domain/test_cliente.py::test_cliente_model_valid_email PASSED [ 19%]
-tests/core/domain/test_favorito.py::test_favorito_create_request PASSED  [ 22%]
-tests/core/domain/test_favorito.py::test_favorito_base_model PASSED      [ 25%]
-tests/core/domain/test_favorito.py::test_favorito_create_model PASSED    [ 27%]
-tests/core/domain/test_favorito.py::test_favorito_domain_model PASSED    [ 30%]
-tests/core/domain/test_favorito.py::test_favorito_response_model PASSED  [ 33%]
-tests/core/domain/test_favorito.py::test_favorito_response_model_validation PASSED [ 36%]
-tests/core/repository/test_cliente_repository.py::test_create_cliente PASSED [ 38%]
-tests/core/repository/test_cliente_repository.py::test_get_by_id_found PASSED [ 41%]
-tests/core/repository/test_cliente_repository.py::test_get_by_id_not_found PASSED [ 44%]
-tests/core/repository/test_cliente_repository.py::test_list_clientes PASSED [ 47%]
-tests/core/repository/test_cliente_repository.py::test_update_cliente_found PASSED [ 50%]
-tests/core/repository/test_cliente_repository.py::test_update_cliente_not_found PASSED [ 52%]
-tests/core/repository/test_cliente_repository.py::test_delete_cliente_found PASSED [ 55%]
-tests/core/repository/test_cliente_repository.py::test_delete_cliente_not_found PASSED [ 58%]
-tests/core/repository/test_favorito_repository.py::test_create_many PASSED [ 61%]
-tests/core/repository/test_favorito_repository.py::test_list_by_cliente PASSED [ 63%]
-tests/core/repository/test_favorito_repository.py::test_delete_favorito_found PASSED [ 66%]
-tests/core/repository/test_favorito_repository.py::test_delete_favorito_not_found PASSED [ 69%]
-tests/core/repository/test_favorito_repository.py::test_exists_true PASSED [ 72%]
-tests/core/repository/test_favorito_repository.py::test_exists_false PASSED [ 75%]
-tests/core/service/test_cliente_service.py::test_criar_cliente PASSED    [ 77%]
-tests/core/service/test_cliente_service.py::test_criar_cliente_com_email_existente PASSED [ 80%]
-tests/core/service/test_cliente_service.py::test_atualizar_cliente_com_senha PASSED [ 83%]
-tests/core/service/test_cliente_service.py::test_atualizar_cliente_sem_senha PASSED [ 86%]
-tests/core/service/test_favorito_service.py::test_adicionar_favoritos_com_sucesso PASSED [ 88%]
-tests/core/service/test_favorito_service.py::test_adicionar_favoritos_ignora_nao_encontrados PASSED [ 91%]
-tests/core/service/test_favorito_service.py::test_adicionar_favoritos_sem_novos_favoritos PASSED [ 94%]
-tests/core/service/test_favorito_service.py::test_remover_favorito_com_sucesso PASSED [ 97%]
-tests/core/service/test_favorito_service.py::test_remover_favorito_nao_encontrado PASSED [100%]
-
-======================== 36 passed, 5 warnings in 1.68s ========================
+==================================== ERRORS ====================================
+_______ ERROR collecting src/tests/core/service/test_favorito_service.py _______
+ImportError while importing test module '/home/edson/repos/BE_AqiFome_RESTfull/src/tests/core/service/test_favorito_service.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/tests/core/service/test_favorito_service.py:4: in <module>
+    from core.externos.produto import Produto
+E   ModuleNotFoundError: No module named 'core.externos'
+=========================== short test summary info ============================
+ERROR src/tests/core/service/test_favorito_service.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 warning, 1 error in 1.45s ==========================

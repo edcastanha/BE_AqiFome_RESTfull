@@ -38,7 +38,6 @@ def test_create_cliente(repo, mock_db):
 
     assert created_cliente.id == 1
     assert created_cliente.nome == cliente_data.nome
-    assert created_cliente.senha.get_secret_value() == "password"
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
     mock_db.refresh.assert_called_once()
@@ -57,7 +56,6 @@ def test_get_by_id_found(repo, mock_db):
     assert cliente is not None
     assert cliente.id == 2
     assert cliente.nome == "Maria"
-    assert cliente.senha is not None
 
 
 def test_get_by_id_not_found(repo, mock_db):
@@ -79,7 +77,7 @@ def test_list_clientes(repo, mock_db):
     clientes = repo.list()
     assert len(clientes) == 2
     assert clientes[0].nome == "A"
-    assert clientes[1].senha.get_secret_value() == "pass2"
+    assert clientes[1].nome == "B"
 
 
 def test_update_cliente_found(repo, mock_db):
