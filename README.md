@@ -21,7 +21,7 @@ A implementação inclui endpoints para gerenciar clientes e favoritos, com vali
 Autenticação é realizada através de tokens JWT, garantindo que apenas usuários autenticados possam acessar as funcionalidades da API.
 
 # API RESTful - AQIFome
-![Content C4](./arquitetura_docs/C4/Container.png)
+<div style="text-align: center;">![Content C4](./arquitetura_docs/C4/Container.png)</div>div>
 
 ======================
 
