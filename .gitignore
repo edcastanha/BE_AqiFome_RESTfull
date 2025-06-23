@@ -193,7 +193,9 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-.vscode
 .vscode-test
 # Visual Studio Code workspace settings
 .github
+
+.virtualenv
+.virtual 
