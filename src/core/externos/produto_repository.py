@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from core.domain.produto import Produto
+from core.externos.produto import Produto
 from core.repository.produto_orm import ProdutoORM
 from core.config.db import SessionLocal
 import logging

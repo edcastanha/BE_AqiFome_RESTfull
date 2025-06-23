@@ -8,7 +8,7 @@ from core.domain.favorito import (
     FavoritoCreateRequest,
     FavoritoResponse,
 )
-from core.domain.produto import Produto
+from core.externos.produto import Produto
 
 
 def test_favorito_create_request():
@@ -38,7 +38,7 @@ from core.domain.favorito import (
     FavoritoCreateRequest,
     FavoritoResponse,
 )
-from core.domain.produto import Produto
+from core.externos.produto import Produto
 
 
 def test_favorito_create_request():

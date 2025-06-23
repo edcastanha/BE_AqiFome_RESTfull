@@ -1,0 +1,8 @@
+@localhost = http://localhost:8000
+
+###
+GET {{localhost}}/ HTTP/1.1
+
+#### Externos Products
+GET https://fakestoreapi.com/products HTTP/1.1
+content-type: application/json

@@ -1,5 +1,4 @@
 from core.domain.cliente import Cliente, ClienteCreate, ClienteInDB
-from core.domain.cliente import Cliente, ClienteCreate, ClienteInDB
 from core.config.db import SessionLocal
 from core.repository.cliente_orm import ClienteORM
 from sqlalchemy.orm import Session

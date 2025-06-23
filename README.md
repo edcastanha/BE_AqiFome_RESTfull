@@ -72,8 +72,8 @@ docker exec be_aqifome_restfull-api-1 python api/scripts/seed.py
 ```
 
 Resultando na criação de um cliente padrão e popular o banco de dados:
-    ** EMAIL=edson@aiqfome.com
-    ** PASSWORD=aiQfome123
+    ** EMAIL    = edson@aiqfome.com
+    ** PASSWORD = aiQfome123
 
 Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.container](.env.container).
 

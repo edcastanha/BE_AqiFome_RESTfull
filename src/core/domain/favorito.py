@@ -1,6 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
-from core.domain.produto import Produto
+from core.externos.produto import Produto
 
 
 class FavoritoBase(BaseModel):
