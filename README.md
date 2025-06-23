@@ -1,6 +1,6 @@
 # API RESTfull - AQIFome
 
-<div style="text-align: center;">![Content C4](./arquitetura_docs/C4/Context.png)</div>
+![Content C4](./arquitetura_docs/C4/Context.png)
 
 
 ## Considerações 
@@ -21,7 +21,7 @@ A implementação inclui endpoints para gerenciar clientes e favoritos, com vali
 Autenticação é realizada através de tokens JWT, garantindo que apenas usuários autenticados possam acessar as funcionalidades da API.
 
 # API RESTful - AQIFome
-<div style="text-align: center;">![Content C4](./arquitetura_docs/C4/Container.png)</div>div>
+![Content C4](./arquitetura_docs/C4/Container.png)
 
 ======================
 
@@ -75,7 +75,7 @@ Resultando na criação de um cliente padrão e popular o banco de dados:
 
 Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.container](./infra/.env.container).
 
-![Auhtenticação](./arquitetura_docs/img/auth_admin_seed.png)
+![Autenticação](./arquitetura_docs/img/auth_admin_seed.png)
 
 
 ## 📚 Documentação da API
