@@ -1,0 +1,31 @@
+@startuml C4_Component
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container(fastapi, "FastAPI Application", "Python/FastAPI")
+Component(routers, "Rotas (Routers)", "FastAPI", "Recebem requisições HTTP e delegam para os serviços")
+Component(cliente_service, "ClienteService", "Python", "Regras de negócio de clientes")
+Component(favorito_service, "FavoritoService", "Python", "Regras de negócio de favoritos, integra Redis e API externa")
+Component(cliente_repo, "ClienteRepository", "SQLAlchemy", "Persistência de clientes")
+Component(favorito_repo, "FavoritoRepository", "SQLAlchemy", "Persistência de favoritos")
+Component(redis_config, "RedisConfig", "Python", "Configuração e acesso ao Redis")
+Component(fake_store, "FakeStoreProduct", "Python/HTTPX", "Cliente da API externa de produtos")
+Component(security, "Security/JWT", "Python", "Autenticação e autorização")
+Component(pydantic_models, "Modelos Pydantic", "Python/Pydantic", "Validação e serialização de dados")
+Component(session_local, "SessionLocal (DB)", "SQLAlchemy", "Gerenciamento de sessão do banco")
+Component(redis_client, "Redis Client", "redis-py", "Conexão com Redis")
+Component(httpx_client, "httpx Client", "httpx", "Conexão HTTP com API externa")
+
+Rel(fastapi, routers, "Chama")
+Rel(routers, cliente_service, "Chama")
+Rel(routers, favorito_service, "Chama")
+Rel(cliente_service, cliente_repo, "Usa")
+Rel(favorito_service, favorito_repo, "Usa")
+Rel(favorito_service, redis_config, "Usa")
+Rel(favorito_service, fake_store, "Usa")
+Rel(cliente_repo, session_local, "Usa")
+Rel(favorito_repo, session_local, "Usa")
+Rel(redis_config, redis_client, "Conecta")
+Rel(fake_store, httpx_client, "Conecta")
+Rel(routers, security, "Usa")
+Rel(routers, pydantic_models, "Usa")
+@enduml

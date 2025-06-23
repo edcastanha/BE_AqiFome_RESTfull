@@ -51,6 +51,7 @@ Você pode escolher uma das seguintes linguagens:
 
 ### 🗄️ Banco de Dados sugerido:
     * PostgreSQL
+    * Redis (para cache de produtos favoritos)
 
 ### 🛠️ Ferramentas Sugerida execução do projeto localmente
     * Docker
@@ -68,7 +69,7 @@ Para testar a API, você pode usar ferramentas como Postman ou Insomnia, ou até
 
 Realize o procedimento para criacao de ADMIN executando o seguinte comando:
 ```bash
-docker exec be_aqifome_restfull-api-1 python api/scripts/seed.py   
+docker exec be_aqifome_restfull-api-1 python scripts/seed.py   
 ```
 
 Resultando na criação de um cliente padrão e popular o banco de dados:
@@ -131,3 +132,43 @@ BE_AqiFome_RESTfull/
 - **Docker e Compose**: Permitem fácil deploy e replicação do ambiente de desenvolvimento.
 
 Essa organização facilita a colaboração, a escalabilidade e a manutenção do projeto ao longo do tempo.
+
+## 🧩 Design System e Arquitetura do Projeto
+
+### Domínio e Fluxos
+- **Cliente**: Entidade persistida no banco relacional (PostgreSQL).
+- **Favorito**: Entidade persistida, relaciona Cliente e produto_id (apenas o ID do produto externo).
+- **Produto**: Não é entidade local. Os dados são consumidos de API externa e cacheados em Redis.
+
+### Fluxo de Favoritos
+- Ao adicionar um favorito:
+  1. Valida o produto via API externa (FakeStoreAPI).
+  2. Se existir, salva o produto em cache Redis (`produto:{produto_id}`) e registra o favorito (cliente_id, produto_id).
+- Ao listar favoritos:
+  1. Busca todos os favoritos do cliente (apenas IDs).
+  2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
+
+### Configuração de Cache (Redis)
+- O projeto possui uma classe `RedisConfig` em `core/config/redis_config.py` para centralizar as configurações do Redis (host, porta, db, expiração).
+- O tempo de expiração do cache pode ser ajustado por variável de ambiente.
+- O serviço Redis deve estar disponível (exemplo: Docker Compose).
+
+### Dependências Adicionais
+- `redis` (redis-py) para integração com Redis.
+- Serviço Redis rodando (exemplo: `redis:alpine` no docker-compose).
+
+### Exemplo de serviço Redis no docker-compose.yml
+```yaml
+redis:
+  image: redis:alpine
+  ports:
+    - "6379:6379"
+```
+
+### Exemplo de variáveis de ambiente
+```
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_EXPIRES=3600
+```

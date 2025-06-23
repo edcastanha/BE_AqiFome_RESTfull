@@ -1,6 +1,5 @@
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
-from core.externos.produto import Produto
 
 
 class FavoritoBase(BaseModel):
@@ -8,42 +7,32 @@ class FavoritoBase(BaseModel):
     cliente_id: int
     produto_id: int
 
-
-class FavoritoCreateRequest(BaseModel):
-    """DTO para a requisição de criação de um ou mais favoritos."""
-    produto_ids: List[int]
-
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "produto_ids": [1, 2, 3]
-            }
-        }
-    )
-
-
-class FavoritoCreate(FavoritoBase):
-    """DTO interno para criar um favorito."""
-    pass
-
-
 class Favorito(FavoritoBase):
     """
     Modelo de domínio principal para Favorito.
     Representa um favorito como ele existe no banco de dados.
     """
     id: int
-    produto: Optional[Produto] = None
 
     model_config = ConfigDict(from_attributes=True)
 
+class FavoritoCreate(FavoritoBase):
+    """DTO para criar um favorito (cliente_id, produto_id)."""
+    pass
+
+class ProdutoExterno(BaseModel):
+    id: int
+    titulo: str
+    imagem: str
+    preco: float
+    # Adicione outros campos relevantes conforme a API externa
 
 class FavoritoResponse(BaseModel):
-    """
-    Modelo de resposta para um favorito, incluindo os detalhes do produto.
-    """
     id: int
     cliente_id: int
-    produto: Produto
+    produto: ProdutoExterno | dict
 
     model_config = ConfigDict(from_attributes=True)
+
+class FavoritoCreateRequest(BaseModel):
+    produto_ids: list[int]

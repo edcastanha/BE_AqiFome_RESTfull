@@ -17,7 +17,7 @@ services:
     build: .
     depends_on:
       - db
-      - cache
+      - redis_cache
     env_file:
       - ./infra/.env.container
     restart: always
@@ -40,9 +40,13 @@ services:
       - api
     restart: always
 
-  cache:
+  redis_cache:
     image: redis:alpine
     ports:
       - "6379:6379"
+    restart: always
+    container_name: redis_cache
+
+
 volumes:
   pgdata:

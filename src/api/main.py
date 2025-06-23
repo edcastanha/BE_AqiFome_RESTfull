@@ -5,25 +5,22 @@ from fastapi.responses import JSONResponse
 import logging
 from typing import Optional
 
-from core.externos.fake_store_product import FakeStoreProduct
 from core.config.db import SessionLocal, Base, engine
 from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
 from core.domain.favorito import (
-    FavoritoCreate,
-    FavoritoCreateRequest,
-    FavoritoResponse,
+    FavoritoCreate, FavoritoResponse, FavoritoCreateRequest
 )
 from core.repository.cliente_repository import ClienteRepository
 from core.repository.favorito_repository import FavoritoRepository
-from core.repository.produto_repository import ProdutoRepository
 from core.service.cliente_service import ClienteService
-from core.service.favorito_service import FavoritoService
 from core.security.security import (
     create_access_token,
     get_current_user,
     get_password_hash,
     verify_password,
 )
+from core.service.favorito_service import FavoritoService
+from externos.fake_store_product import FakeStoreProduct
 
 logger = logging.getLogger("uvicorn.error")
 # Configuração do logger
@@ -45,20 +42,15 @@ def get_db():
     finally:
         db.close()
 
-def get_produto_repository(db: Session = Depends(get_db)) -> ProdutoRepository:
-    return ProdutoRepository(db)
-
 def get_fake_store_product() -> FakeStoreProduct:
     return FakeStoreProduct()
 
 def get_favorito_service(
     db: Session = Depends(get_db),
-    produto_repository: ProdutoRepository = Depends(get_produto_repository),
     fake_store_product: FakeStoreProduct = Depends(get_fake_store_product)
 ) -> FavoritoService:
     return FavoritoService(
         repository=FavoritoRepository(db),
-        produto_repository=produto_repository,
         fake_store_product=fake_store_product,
     )
 
