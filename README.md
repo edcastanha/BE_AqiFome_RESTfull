@@ -58,7 +58,6 @@ git clone https://github.com/edcastanha/BE_AqiFome_RESTfull.git
 cd BE_AqiFome_RESTfull/
 
 docker-compose up --build -d
-
 ```
 
 **Após a inicialização, a aplicação estará disponível no endereço:**
@@ -68,11 +67,11 @@ docker-compose up --build -d
 
 Realize o procedimento para criacao de ADMIN executando o seguinte comando:
 ```bash
-docker exec be_aqifome_restfull-api-1 python scripts/seed.py   
+docker exec be_aqifome_restfull-api-1 python helpers/seed.py   
 ```
 Resultando na criação de um cliente padrão e popular o banco de dados:
-    ** EMAIL    = edson@aiqfome.com
-    ** PASSWORD = aiQfome123
+- **EMAIL**    = edson@aiqfome.com
+- **PASSWORD** = aiQfome123
 
 Obs.: Em seguida você pode acessar a API e realizar as operações de CRUD para clientes e favoritos, iniciando com autenticação com os dados [.env.container](./infra/.env.container).
 
