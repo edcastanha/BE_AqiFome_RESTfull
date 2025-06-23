@@ -1,0 +1,14 @@
+@startuml C4_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(cliente, "Cliente", "Usuário do sistema, consome a API via app ou web.")
+System(api_rest, "API RESTful AQIFome", "FastAPI, Python")
+System_Ext(postgresql, "PostgreSQL", "Banco de dados relacional para clientes e favoritos.")
+System_Ext(redis, "Redis", "Cache de produtos favoritos.")
+System_Ext(fakestore, "FakeStore API", "API pública de produtos.")
+
+Rel(cliente, api_rest, "CRUD Clientes, Favoritos")
+Rel(api_rest, postgresql, "Persistência de clientes e favoritos")
+Rel(api_rest, redis, "Cache de produtos favoritos")
+Rel(api_rest, fakestore, "Consulta de produtos externos")
+@enduml

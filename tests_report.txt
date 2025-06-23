@@ -1,13 +1,73 @@
 ============================= test session starts ==============================
 platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
 rootdir: /home/edson/repos/BE_AqiFome_RESTfull
-plugins: anyio-4.9.0
-collecting ... collected 5 items
+plugins: anyio-4.9.0, cov-6.2.1, asyncio-1.0.0
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 38 items
 
-tests/core/domain/test_cliente.py::test_cliente_model PASSED             [ 20%]
-tests/core/domain/test_favorito.py::test_favorito_model PASSED           [ 40%]
-tests/core/service/test_cliente_service.py::test_criar_cliente PASSED    [ 60%]
-tests/core/service/test_favorito_service.py::test_adicionar_favorito PASSED [ 80%]
-tests/core/service/test_favorito_service.py::test_listar_remover_favorito PASSED [100%]
+src/tests/api/test_main.py ..F.                                          [ 10%]
+src/tests/core/domain/test_cliente.py .......                            [ 28%]
+src/tests/core/domain/test_favorito.py ......                            [ 44%]
+src/tests/core/repository/test_cliente_repository.py ........            [ 65%]
+src/tests/core/repository/test_favorito_repository.py ......             [ 81%]
+src/tests/core/service/test_cliente_service.py ....                      [ 92%]
+src/tests/core/service/test_favorito_service.py ...                      [100%]
 
-========================= 5 passed, 1 warning in 0.51s =========================
+=================================== FAILURES ===================================
+________________________ test_crud_cliente_e_favoritos _________________________
+
+mock_redis_config = <MagicMock name='RedisConfig' id='139798209216880'>
+mock_fake_store = <MagicMock name='FakeStoreProduct' id='139798196101216'>
+
+    @patch("core.service.favorito_service.FakeStoreProduct")
+    @patch("core.service.favorito_service.RedisConfig")
+    def test_crud_cliente_e_favoritos(mock_redis_config, mock_fake_store):
+        # Mock Redis
+        mock_redis = MagicMock()
+        mock_redis.get.return_value = None
+        mock_redis.set.return_value = True
+        mock_redis_config.return_value.get_client.return_value = mock_redis
+        mock_redis_config.return_value.get_expires.return_value = 3600
+    
+        # Mock FakeStoreProduct
+        mock_fake_store.return_value.get_product.return_value = {
+            "id": 1, "titulo": "Produto Teste", "imagem": "img.png", "preco": 10.0
+        }
+        mock_fake_store.return_value.get_product_sync.return_value = {
+            "id": 1, "titulo": "Produto Teste", "imagem": "img.png", "preco": 10.0
+        }
+    
+        # Criar cliente
+        cliente_data = {
+            "nome": "Test User",
+            "email": "testuser@example.com",
+            "senha": "senha123",
+            "tipo": 0
+        }
+    
+    
+        # Login
+        resp = client.post("/token", data={"username": "testuser@example.com", "password": "senha123"})
+        assert resp.status_code == 200
+    
+        token = resp.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+    
+        # Autenticado
+        resp = client.post("/clientes", json=cliente_data, headers=headers)
+>       assert resp.status_code == 201
+E       assert 400 == 201
+E        +  where 400 = <Response [400 Bad Request]>.status_code
+
+src/tests/api/test_main.py:55: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  uvicorn.error:main.py:105 Erro de validação ao criar cliente: E-mail já cadastrado
+=============================== warnings summary ===============================
+.virtual/lib/python3.12/site-packages/passlib/utils/__init__.py:854
+  /home/edson/repos/BE_AqiFome_RESTfull/.virtual/lib/python3.12/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED src/tests/api/test_main.py::test_crud_cliente_e_favoritos - assert 400...
+=================== 1 failed, 37 passed, 1 warning in 1.69s ====================

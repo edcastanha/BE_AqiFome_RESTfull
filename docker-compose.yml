@@ -1,21 +1,5 @@
 services:
-  api:
-    build: .
-    container_name: rest_api
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    env_file:
-      - .env.container
-    restart: always
-    # Aguardar o start de DB
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
+  
   db:
     image: postgres:15
     container_name: db_api
@@ -29,5 +13,40 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: always
 
+  api:
+    build: .
+    depends_on:
+      - db
+      - redis_cache
+    env_file:
+      - ./infra/.env.container
+    restart: always
+    deploy:
+      replicas: 2 # Defina o número de instâncias, Design System - LOAD BALANCER
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_load_balancer
+    ports:
+      - "8000:80"
+    volumes:
+      - ./infra/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+    restart: always
+
+  redis_cache:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: always
+    container_name: redis_cache
+
+
 volumes:
-  pgdata: 
+  pgdata:

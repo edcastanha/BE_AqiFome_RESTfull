@@ -1,0 +1,29 @@
+@startuml C4_Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Usuário (App/Web)")
+System_Boundary(api_rest, "API RESTful AQIFome") {
+    Container(fastapi, "FastAPI Application", "Python/FastAPI", "Recebe requisições HTTP")
+    Container(cliente_service, "ClienteService", "Python", "Regras de negócio de clientes")
+    Container(favorito_service, "FavoritoService", "Python", "Regras de negócio de favoritos, integra Redis e API externa")
+    Container(cliente_repo, "ClienteRepository", "SQLAlchemy", "Persistência de clientes")
+    Container(favorito_repo, "FavoritoRepository", "SQLAlchemy", "Persistência de favoritos")
+    Container(redis_config, "RedisConfig", "Python", "Configuração e acesso ao Redis")
+    Container(fake_store, "FakeStoreProduct", "Python/HTTPX", "Cliente da API externa de produtos")
+}
+System_Ext(postgresql, "PostgreSQL", "Banco de dados relacional")
+System_Ext(redis, "Redis", "Cache de produtos favoritos")
+System_Ext(fakestore, "FakeStore API", "API pública de produtos")
+
+Rel(user, fastapi, "HTTP")
+Rel(fastapi, cliente_service, "Chama")
+Rel(fastapi, favorito_service, "Chama")
+Rel(cliente_service, cliente_repo, "Usa")
+Rel(favorito_service, favorito_repo, "Usa")
+Rel(favorito_service, redis_config, "Usa")
+Rel(favorito_service, fake_store, "Usa")
+Rel(cliente_repo, postgresql, "ORM")
+Rel(favorito_repo, postgresql, "ORM")
+Rel(redis_config, redis, "Conecta")
+Rel(fake_store, fakestore, "HTTP")
+@enduml
