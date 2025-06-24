@@ -44,31 +44,53 @@ def test_favorito_domain_model():
 
 def test_produto_externo_model():
     """Testa o modelo de produto externo."""
+    from core.domain.produto import Rating
+    
+    # Teste com rating
     produto = ProdutoExterno(
         id=1,
         title="Teste",
         price=Decimal("10.50"),
         description="Descrição de teste",
         category="Categoria Teste",
-        image="https://example.com/image.jpg"
+        image="https://example.com/image.jpg",
+        rating=Rating(rate=4.5, count=120)
     )
     assert produto.id == 1
     assert produto.title == "Teste"
     assert produto.price == Decimal("10.50")
     assert produto.description == "Descrição de teste"
+    assert produto.rating.rate == 4.5
+    assert produto.rating.count == 120
+    
+    # Teste sem rating (deve funcionar também)
+    produto_sem_rating = ProdutoExterno(
+        id=2,
+        title="Teste Sem Rating",
+        price=Decimal("20.75"),
+        description="Descrição de teste sem rating",
+        category="Categoria Teste",
+        image="https://example.com/image2.jpg"
+    )
+    assert produto_sem_rating.rating is None
 
 
 def test_favorito_response_model():
     """Testa o modelo de resposta da API para um favorito."""
+    from core.domain.produto import Rating
+    
     produto = ProdutoExterno(
         id=1,
         title="Teste",
         price=Decimal("10.50"),
         description="Descrição de teste",
         category="Categoria Teste",
-        image="https://example.com/image.jpg"
+        image="https://example.com/image.jpg",
+        rating=Rating(rate=4.5, count=120)
     )
     response = FavoritoResponse(id=20, cliente_id=1, produto=produto)
     assert response.id == 20
     assert response.cliente_id == 1
+    assert response.produto.rating is not None
+    assert response.produto.rating.rate == 4.5
     assert response.produto.id == 1

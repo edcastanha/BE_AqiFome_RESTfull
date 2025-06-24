@@ -136,18 +136,29 @@ O modelo ProdutoExterno é utilizado para representar os produtos que são consu
 **A API fake não possui autenticação e o modelo product possue tipagem e que podem acarretar em problemas de validação, como images com URLS inválidas, por exemplo.
 E para price efetuei o tratamento garantir um modelo de moeda valido, uma vez que float pode gerar problemas de precisão.**
 modelo da api externa:
+Na documentacao da api temos o modelo:
+id:	        integer
+title:       string
+price:      number <float>
+description: string
+category:   string
+image:	    string <uri>
+
+No entanto, o objeto entregue tem um campo `rating` que é um objeto com `rate` e `count`, o que não está documentado.
+
 ```json
-  {
-    "id": 1,
-    "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-    "price": 109.95,
-    "description": "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
-    "category": "men's clothing",
-    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "rating": {
-      "rate": 3.9,
-      "count": 120
-    }
+{
+  "id": 1,
+  "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+  "price": 109.95,
+  "description": "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
+  "category": "men's clothing",
+  "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+  "rating": {
+    "rate": 3.9,
+    "count": 120
+  }
+}
 ```
 
 ## 🧩 Design System e Arquitetura do Projeto
