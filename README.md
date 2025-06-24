@@ -128,21 +128,20 @@ Essa organização facilita a colaboração, a escalabilidade e a manutenção d
   1. Busca todos os favoritos do cliente (apenas IDs).
   2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
 
-<style color="red">
 **OBSERVACAO de MODELO PRODUTO**
-</style> 
+
 O modelo ProdutoExterno é utilizado para representar os produtos que são consumidos da API externa. Ele contém informações detalhadas sobre o produto, como título, preço, descrição, categoria e imagem. Esses dados são armazenados em cache no Redis para melhorar a performance das consultas.
 
 **A API fake não possui autenticação e o modelo product possue tipagem e que podem acarretar em problemas de validação, como images com URLS inválidas, por exemplo.
-E para price efetuei o tratamento garantir um modelo de moeda valido, uma vez que float pode gerar problemas de precisão.**
-modelo da api externa:
+E para price efetuei o tratamento garantir um modelo de moeda valido, uma vez que float pode gerar problemas de precisão modelo da api externa.**
+
 Na documentacao da api temos o modelo:
-id:	        integer
-title:       string
-price:      number <float>
-description: string
-category:   string
-image:	    string <uri>
+- id:	        integer
+- title:       string
+- price:      number <float>
+- description: string
+- category:   string
+- image:	    string <uri>
 
 No entanto, o objeto entregue tem um campo `rating` que é um objeto com `rate` e `count`, o que não está documentado.
 
