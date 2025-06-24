@@ -8,7 +8,7 @@ from typing import Optional
 from core.config.db import SessionLocal, Base, engine
 from core.domain.cliente import Cliente, ClienteCreate, ClienteUpdate
 from core.domain.favorito import (
-    FavoritoCreate, FavoritoResponse, FavoritoCreateRequest
+    FavoritoCreate, FavoritoResponse, FavoritoBatchCreate
 )
 from core.repository.cliente_repository import ClienteRepository
 from core.repository.favorito_repository import FavoritoRepository
@@ -179,7 +179,7 @@ def deletar_cliente(
 )
 async def adicionar_favoritos(
     cliente_id: int,
-    request_data: FavoritoCreateRequest,
+    request_data: FavoritoBatchCreate,
     service: FavoritoService = Depends(get_favorito_service),
     current_user: Cliente = Depends(get_current_user),
 ):

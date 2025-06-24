@@ -128,7 +128,29 @@ Essa organização facilita a colaboração, a escalabilidade e a manutenção d
   1. Busca todos os favoritos do cliente (apenas IDs).
   2. Para cada produto_id, busca os dados no Redis. Se não houver, pode buscar na API externa e atualizar o cache.
 
+<<<<<<< HEAD
 ## Design System e Arquitetura do Projeto
+=======
+<style color="red">>
+**OBSERVACAO de MODELO PRODUTO**
+</style>
+O modelo ProdutoExterno é utilizado para representar os produtos que são consumidos da API externa. Ele contém informações detalhadas sobre o produto, como título, preço, descrição, categoria e imagem. Esses dados são armazenados em cache no Redis para melhorar a performance das consultas.
+
+**A API fake não possui autenticação e o modelo product possue tipagem e que podem acarretar em problemas de validação, como images com URLS inválidas, por exemplo.
+E para price efetuei o tratamento garantir um modelo de moeda valido, uma vez que float pode gerar problemas de precisão.**
+
+```
+id:	        integer
+title:       string
+price:      number <float>
+description: string
+category:   string
+image:	    string <uri>
+
+```
+
+## 🧩 Design System e Arquitetura do Projeto
+>>>>>>> 07aa7cd (feat: adiciona modelo ProdutoExterno e atualiza Favorito para suportar criação em lote, refactor modelo produto para price ser um decimal, uma vez que float pode gerar problemas de precisao)
 
 ![Components C4](./arquitetura_docs/C4/Componet.png)
 
