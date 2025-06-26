@@ -228,24 +228,51 @@ async def adicionar_favoritos(
         return error_response(500, f"Ocorreu um erro interno: {e}")
 
 
-@app.get("/clientes/{cliente_id}/favoritos", response_model=list[FavoritoResponse])
+@app.get(
+    "/clientes/{cliente_id}/favoritos",
+    response_model=list[FavoritoResponse],
+    summary="Listar favoritos de um cliente",
+    responses={
+        200: {"description": "Lista de favoritos do cliente", "model": FavoritoResponse},
+        403: {"description": "Operação não permitida"},
+        500: {"description": "Erro interno"},
+    },
+    tags=["Favoritos"],
+)
 def listar_favoritos(
     cliente_id: int,
     service: FavoritoService = Depends(get_favorito_service),
     current_user: Cliente = Depends(get_current_user),
 ):
+    """
+    Lista todos os produtos favoritos de um cliente autenticado.
+    """
     if cliente_id != current_user.id:
         return error_response(403, "Operação não permitida")
     return service.listar_favoritos(cliente_id)
 
 
-@app.delete("/clientes/{cliente_id}/favoritos/{produto_id}")
+@app.delete(
+    "/clientes/{cliente_id}/favoritos/{produto_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Remover um produto dos favoritos de um cliente",
+    responses={
+        200: {"description": "Favorito removido com sucesso", "content": {"application/json": {"example": {"ok": True}}}},
+        403: {"description": "Operação não permitida"},
+        404: {"description": "Favorito não encontrado"},
+        500: {"description": "Erro interno"},
+    },
+    tags=["Favoritos"],
+)
 def remover_favorito(
     cliente_id: int,
     produto_id: int,
     service: FavoritoService = Depends(get_favorito_service),
     current_user: Cliente = Depends(get_current_user),
 ):
+    """
+    Remove um produto dos favoritos do cliente autenticado.
+    """
     if cliente_id != current_user.id:
         return error_response(403, "Operação não permitida")
     if not service.remover_favorito(cliente_id, produto_id):
