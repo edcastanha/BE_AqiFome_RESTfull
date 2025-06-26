@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from fastapi.openapi.models import Response as OpenAPIResponse
+from fastapi import status as http_status
 import logging
 from typing import Optional
 
@@ -91,11 +93,29 @@ def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 # --- Clientes ---
-@app.post("/clientes", response_model=Cliente)
-def criar_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
+@app.post(
+    "/clientes",
+    response_model=Cliente,
+    status_code=status.HTTP_201_CREATED,
+    summary="Criar um novo cliente",
+    responses={
+        201: {"description": "Cliente criado com sucesso", "model": Cliente},
+        400: {"description": "Erro de validação"},
+        500: {"description": "Erro interno"},
+    },
+)
+def criar_cliente(
+    cliente: ClienteCreate = Body(..., example={
+        "nome": "Edson Bezerra",
+        "email": "exemplo@teste.com",
+        "senha": "senha123",
+        "tipo": 1
+    }),
+    db: Session = Depends(get_db)
+):
     """
     Cria um novo cliente.
-    O cliente deve fornecer ao menos e-mail e senha.
+    O cliente deve fornecer ao menos nome, e-mail, senha e tipo.
     A senha será armazenada com hash.
     """
     service = ClienteService(ClienteRepository(db))
@@ -175,14 +195,24 @@ def deletar_cliente(
     response_model=list[FavoritoResponse],
     status_code=status.HTTP_201_CREATED,
     summary="Adicionar um produto aos favoritos de um cliente",
+    responses={
+        201: {"description": "Favoritos adicionados com sucesso", "model": FavoritoResponse},
+        400: {"description": "Erro de validação"},
+        403: {"description": "Operação não permitida"},
+        500: {"description": "Erro interno"},
+    },
     tags=["Favoritos"],
 )
 async def adicionar_favoritos(
     cliente_id: int,
-    request_data: FavoritoBatchCreate,
+    request_data: FavoritoBatchCreate = Body(..., example={"produto_ids": [1, 2, 3]}),
     service: FavoritoService = Depends(get_favorito_service),
     current_user: Cliente = Depends(get_current_user),
 ):
+    """
+    Adiciona um ou mais produtos aos favoritos do cliente.
+    Valida os produtos via API externa e salva no cache Redis.
+    """
     if cliente_id != current_user.id:
         return error_response(403, "Operação não permitida")
     try:
